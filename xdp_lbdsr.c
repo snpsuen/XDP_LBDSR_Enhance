@@ -22,41 +22,41 @@ static void sig_handler(int sig) {
 }
 
 static int32_t last_serverkey(int mfd) {
-  uint32_t* current = NULL;
-  int32_t last = -1;
-  uint32_t next;
-  struct serveraddr backend;
-  
-  while (bpf_map_get_next_key(mfd, current, &next) == 0) {
-	if (bpf_map_lookup_elem(mfd, &next, &backend) == 0)
-	  last = next;
-	  current = &next;
-  }
-  
-  return last;
+	uint32_t* current = NULL;
+	int32_t last = -1;
+	uint32_t next;
+	struct serveraddr backend;
+	while (bpf_map_get_next_key(mfd, current, &next) == 0) {
+		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0)
+			last = next;
+		
+		current = &next;
+	}
+	
+	return last;
 }
 
 static uint32_t build_serverindex(int smfd, int sifd) {
-  uint32_t* current = NULL;
-  uint32_t next;
-  uint8_t macaddr[6];
-  uint8_t index = 1;
-  uint32_t count = 0;
-  
-  while (bpf_map_get_next_key(smfd, current, &next) == 0) {
-	if (bpf_map_lookup_elem(smfd, &next, macaddr) == 0) {
-	  bpf_map_update_elem(sifd, &index, &next, BPF_ANY);
-	  count++;
-	  index++;
-	}
+	uint32_t* current = NULL;
+	uint32_t next;
+	struct serveraddr backend;
+	uint8_t index = 1;
+	uint32_t count = 0;
+	
+	while (bpf_map_get_next_key(smfd, current, &next) == 0) {
+		if (bpf_map_lookup_elem(smfd, &next, &backend) == 0) {
+			bpf_map_update_elem(sifd, &index, &next, BPF_ANY);
+			count++;
+			index++;
+		}
 	  
-    current = &next;
-  }
-  
-  index = 0;
-  bpf_map_update_elem(sifd, &index, &count, BPF_ANY);
-
-  return 0;
+		current = &next;
+	}
+	
+	index = 0;
+	bpf_map_update_elem(sifd, &index, &count, BPF_ANY);
+	
+	return 0;
 }
 
 uint32_t headsup_dispatch(void*, void *data, size_t)  {

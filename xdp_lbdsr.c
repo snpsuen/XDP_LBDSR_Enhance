@@ -20,11 +20,6 @@ static void sig_handler(int sig) {
 	exitpoll = true;
 }
 
-struct serveraddr {
-  uint32_t ipaddr;
-  uint8_t macaddr[6];
-}
-
 static int32_t last_serverkey(int mfd) {
   uint32_t* current = NULL;
   int32_t last = -1;

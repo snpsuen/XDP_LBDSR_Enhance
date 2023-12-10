@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebpfxdp-pod
+spec:
+  containers:
+  - image: snpsuen/ebpf-xdp:v02
+    name: ebpfxdp02
+    ports:
+    - containerPort: 80
+    command:
+    - sleep
+    - infinity
+    securityContext:
+      privileged: true

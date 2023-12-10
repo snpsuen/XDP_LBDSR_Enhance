@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: lbdsr01
+  name: lbdsr0a
 spec:
   containers:
   - image: snpsuen/ebpf-xdp:v02
-    name: lbdsr01
+    name: lbdsr0a
     ports:
     - containerPort: 80
     command:
@@ -13,3 +13,17 @@ spec:
     - infinity
     securityContext:
       privileged: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend0x
+spec:
+  containers:
+  - image: nginxdemos/hello:plain-text
+    name: backend0x
+    ports:
+    - containerPort: 80
+    securityContext:
+      privileged: true
+

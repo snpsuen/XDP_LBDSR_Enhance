@@ -30,8 +30,7 @@ static int32_t last_serverkey(int mfd) {
   while (bpf_map_get_next_key(mfd, current, &next) == 0) {
 	if (bpf_map_lookup_elem(mfd, &next, &backend) == 0)
 	  last = next;
-	  
-    current = &next;
+	  current = &next;
   }
   
   return last;

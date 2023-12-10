@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ebpfxdp-pod
+  name: lbdsr01
 spec:
   containers:
   - image: snpsuen/ebpf-xdp:v02
-    name: ebpfxdp02
+    name: lbdsr01
     ports:
     - containerPort: 80
     command:

@@ -1,6 +1,7 @@
 #include "vmlinux0.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
+#include "xdp_lbdsr.h"
 
 struct {
     __uint(type, BPF_MAP_TYPE_ARRAY);

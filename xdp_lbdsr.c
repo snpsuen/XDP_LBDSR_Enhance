@@ -354,7 +354,7 @@ uint32_t do_exit(void) {
 	char ans[8];
 	
 	memset(ans, 0, sizeof(ans));
-	printf("Please confirm you want to exit the control plane (Y/n): ");
+	printf("Please confirm if you want to exit the control plane (Y/N): ");
 	if (fgets(ans, sizeof(ans), stdin) == NULL) { 
 		printf("Fail to read the input stream"); 
 		return 0;
@@ -379,72 +379,73 @@ int main(int argc, char *argv[]) {
 			interval = 1000;
 			break;
 		case 2:
-            ifname = argv[1];
-            interval = 1000;
-            break;
-        default:
-            ifname = argv[1];
-            interval = atoi(argv[2]);
+			ifname = argv[1];
+			interval = 1000;
+			break;
+		default:
+			ifname = argv[1];
+			interval = atoi(argv[2]);
 	}
 
-    ifindex = if_nametoindex(ifname);
-    if (!ifindex) {
-        perror("failed to resolve iface to ifindex");
-        return EXIT_FAILURE;
-    }
-
-    struct rlimit rlim = {
-        .rlim_cur = RLIM_INFINITY,
-        .rlim_max = RLIM_INFINITY,
-    };
-    if (setrlimit(RLIMIT_MEMLOCK, &rlim)) {
-        perror("failed to increase RLIMIT_MEMLOCK");
-        return EXIT_FAILURE;
-    }
-	    
-    // Load and verify BPF application
-    struct xdp_lbdsr_bpf* lbdbpf = xdp_lbdsr_bpf__open_and_load();
-    if (!dpbpf) {
-        fprintf(stderr, "Failed to open and open BPF object\n");
-        return EXIT_FAILURE;
-    }
-
-    // Attach xdp program to interface
-    struct bpf_link* lbdlink = bpf_program__attach_xdp(lbdbpf->progs.processping, ifindex);
-    if (!lbdlink) {
-        fprintf(stderr, "Failed to call bpf_program__attach_xdp\n");
-        return EXIT_FAILURE;
-    }
+	ifindex = if_nametoindex(ifname);
+	if (!ifindex) {
+		perror("Failed to resolve iface to ifindex (error: %s)\n", strerror(errno)");
+		return EXIT_FAILURE;
+	}
+	
+	struct rlimit rlim = {
+	    .rlim_cur = RLIM_INFINITY,
+	    .rlim_max = RLIM_INFINITY,
+        };
+	
+	if (setrlimit(RLIMIT_MEMLOCK, &rlim)) {
+		perror("Failed to increase RLIMIT_MEMLOCK (error: %s)\n", strerror(errno)");
+		return EXIT_FAILURE;
+	}
+	
+	// Load and verify BPF application
+	struct xdp_lbdsr_bpf* lbdbpf = xdp_lbdsr_bpf__open_and_load();
+	if (!lpdbpf) {
+		fprintf(stderr, "Failed to complete xdp_lbdsr_bpf__open_and_load (error: %s)\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+	
+	// Attach xdp program to interface
+	struct bpf_link* lbdlink = bpf_program__attach_xdp(lbdbpf->progs.dispatchworkload, ifindex);
+	if (!lbdlink) {
+		fprintf(stderr, "Failed to complete bpf_program__attach_xdp (error: %s)\n", strerror(errno)");
+		return EXIT_FAILURE;
+	}
 	
 	int smfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "server_map");
-    if (smfd < 0) {
-        fprintf(stderr, "Failed to find the fd for the backend server map (error: %s))\n", strerror(errno));
-        return EXIT_FAILURE;
-    }
+	if (smfd < 0) {
+		fprintf(stderr, "Failed to find the fd for the backend server map (error: %s)\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
 	
 	int sifd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "serverindex_map");
-    if (sifd < 0) {
-        fprintf(stderr, "Failed to find the fd for the server index map (error: %s))\n", strerror(errno));
-        return EXIT_FAILURE;
-    }
+	if (sifd < 0) {
+		fprintf(stderr, "Failed to find the fd for the server index map (error: %s))\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
 	
 	int lmfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "lb_map");
-    if (lmfd < 0) {
-        fprintf(stderr, "Failed to find the fd for the load balancer map (error: %s))\n", strerror(errno));
-        return EXIT_FAILURE;
-    }
+	if (lmfd < 0) {
+		fprintf(stderr, "Failed to find the fd for the load balancer map (error: %s))\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
 
 	int drfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "dispatch_ring");
-    if (drfd < 0) {
-        fprintf(stderr, "Failed to find the fd for the dispatch ring map (error: %s))\n", strerror(errno));
-        return EXIT_FAILURE;
-    }
+	if (drfd < 0) {
+		fprintf(stderr, "Failed to find the fd for the dispatch ring map (error: %s))\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
 
-    struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, NULL, NULL);
-    if (!ringbuf) {
-        fprintf(stderr, "Failed to create ring buffer\n");
-        return EXIT_FAILURE;
-    }
+	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, NULL, NULL);
+	if (!ringbuf) {
+		fprintf(stderr, "Failed to create ring buffer (error: %s)\n", strerror(errno)");
+		return EXIT_FAILURE;
+	}
 
 	while (1) {
 		printf("Load balancer control plane\n\n");

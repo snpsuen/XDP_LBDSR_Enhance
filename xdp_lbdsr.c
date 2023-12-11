@@ -351,41 +351,41 @@ int32_t do_dispatch(struct ring_buffer* ringbuf, uint32_t interval) {
 
 
 uint32_t do_exit(void) {
-	char ans[MAXRES];
+	char ans[8];
 	
 	memset(ans, 0, sizeof(ans));
-	printf("Please confirm you want to exit the control plane (Y/n): ")
-    if (fgets(ans, sizeof(ans), stdin) == NULL) { 
+	printf("Please confirm you want to exit the control plane (Y/n): ");
+	if (fgets(ans, sizeof(ans), stdin) == NULL) { 
 		printf("Fail to read the input stream"); 
 		return 0;
-    }
+	}
 	
-    ans[strlen(ans)-1] = 0;
-    if ((strcmp(ans, "Y") == 0) || (strcmp(ans, "y") == 0))
+	ans[strlen(ans)-1] = 0;
+	if ((strcmp(ans, "Y") == 0) || (strcmp(ans, "y") == 0))
 		return 1;
 	
 	return 0;
 }
 
 int main(int argc, char *argv[]) {
-    uint32_t ifindex;
-    uint8_t* ifname;
-    uint32_t interval;
+	uint32_t ifindex;
+	uint8_t* ifname;
+	uint32_t interval;
 	uint32_t exitcon = 0;
     
-    switch(argc) {
-        case 1:
-            ifname = "eth0";
-            interval = 1000;
-            break;
-        case 2:
+	switch(argc) {
+		case 1:
+			ifname = "eth0";
+			interval = 1000;
+			break;
+		case 2:
             ifname = argv[1];
             interval = 1000;
             break;
         default:
             ifname = argv[1];
             interval = atoi(argv[2]);
-    }
+	}
 
     ifindex = if_nametoindex(ifname);
     if (!ifindex) {

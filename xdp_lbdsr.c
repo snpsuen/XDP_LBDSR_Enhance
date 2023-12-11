@@ -59,16 +59,16 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 	return 0;
 }
 
-uint32_t headsup_dispatch(void*, void *data, size_t)  {
-    struct dispatchmsg_t* msg = (struct displatchmsg_t *)data;
-    uint8_t clientip[INET_ADDRSTRLEN];
+uint32_t headsup_dispatch(void*, void* data, size_t)  {
+	struct dispatchmsg_t* msg = (struct displatchmsg_t*)data;
+	uint8_t clientip[INET_ADDRSTRLEN];
 	uint8_t serverip[INET_ADDRSTRLEN];
 	struct serveraddr backend;
-    
-    printf("--- Received and dispatched a request! ---\n");
-    printf("Timestamp: %lld\n", msg->timestamp);
-    inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
-    printf(" From Client IP: %s\n", str_s);
+	
+	printf("--- Received and dispatched a request! ---\n");
+	printf("Timestamp: %lld\n", msg->timestamp);
+	inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
+	printf(" From Client IP: %s\n", str_s);
 	
 	int ret = bpf_map_lookup_elem(smfd, &(msg->backendkey), &backend);
 	if (ret < 0)
@@ -77,12 +77,12 @@ uint32_t headsup_dispatch(void*, void *data, size_t)  {
 		inet_ntop(AF_INET, &(backend.ipaddr), serverip, sizeof(serverip));
 		printf("To Server Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", msg->backendkey, serverip, backend.macaddr[0], backend.macaddr[1], backend.macaddr[2], backend.macaddr[3], backend.macaddr[4], backend.macaddr[5]);
 	}
-    
-    return 0;
+	
+	return 0;
 }
 
 uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
-	int exithere = 0;
+	uint32_t exithere = 0;
 	
 	while (1) {
 		printf("Backend server management:\n\n")
@@ -98,7 +98,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 	  
 		switch(option) {
 		case 1:
-			if (last_serverkey(mfd) < 0)
+			if (last_serverkey(smfd) < 0)
 				printf("The backend server map is empty");
 			else {
 				uint32_t* current = NULL;
@@ -106,8 +106,8 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				struct serveraddr backend;
 				serverip[INET_ADDRSTRLEN];
 								
-				while (bpf_map_get_next_key(mfd, current, &next) == 0) {
-					if (bpf_map_lookup_elem(mfd, &next, &backend) == 0) {
+				while (bpf_map_get_next_key(smfd, current, &next) == 0) {
+					if (bpf_map_lookup_elem(smfd, &next, &backend) == 0) {
 						inet_ntop(AF_INET, &(backend.ipaddr), serverip, sizeof(serverip));
 						printf("Key: %d ---> IP: %s / MAC: %x:%x:%x:%x:%x:%x \n", next, serverip, backend.macaddr[0], backend.macaddr[1], backend.macaddr[2], backend.macaddr[3], backend.macaddr[4], backend.macaddr[5]);
 					}

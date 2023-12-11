@@ -459,11 +459,12 @@ int main(int argc, char *argv[]) {
 		scanf("%d%*c", &option);
 	  
 		switch(option) {
-		case 1:
-			do_backend(smfd, sifd);
-            break;
-        case 2:
-            do_loadbalancer(lmfd);
+			case 1:
+				do_backend(smfd, sifd);
+				break;
+			
+			case 2:
+				do_loadbalancer(lmfd);
             break;
 		case 3:
             do_disptach(ringbuf, interval);

@@ -26,4 +26,16 @@ spec:
     - containerPort: 80
     securityContext:
       privileged: true
-
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend0y
+spec:
+  containers:
+  - image: nginxdemos/hello:plain-text
+    name: backend0y
+    ports:
+    - containerPort: 80
+    securityContext:
+      privileged: true

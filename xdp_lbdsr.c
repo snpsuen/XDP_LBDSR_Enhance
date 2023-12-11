@@ -223,7 +223,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				if (ret < 0)
 					fprintf(stderr, "Cannot find the server key %d (error: %s)\n", addrkey, strerror(errno));
 				else {
-					ret = bpf_map_delete_elem(smfd);
+					ret = bpf_map_delete_elem(smfd, &addrkey);
 					if (ret < 0) 
 						fprintf(stderr, "Cannot delete the server key %d (error: %s)\n", addrkey, strerror(errno));
 					else {
@@ -265,13 +265,13 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 uint32_t do_loadbalancer(uint32_t lmfd) {
 	uint32_t* current = NULL;
 	uint32_t next;
-	struct serveraddr backend;
+	struct serveraddr loadbalancer;
 	uint8_t serverip[INET_ADDRSTRLEN];
 	
 	if (bpf_map_get_next_key(lmfd, current, &next) == 0) {
-		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0) {
-			inet_ntop(AF_INET, &(backend.ipaddr), serverip, sizeof(serverip));
-			printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", next, serverip, backend.macaddr[0], backend.macaddr[1], backend.macaddr[2], backend.macaddr[3], backend.macaddr[4], backend.macaddr[5]);
+		if (bpf_map_lookup_elem(lmfd, &next, &loadbalancer) == 0) {
+			inet_ntop(AF_INET, &(loadbalancer.ipaddr), serverip, sizeof(serverip));
+			printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", next, serverip, loadbalancer.macaddr[0], loadbalancer.macaddr[1], loadbalancer.macaddr[2], loadbalancer.macaddr[3], loadbalancer.macaddr[4], loadbalancer.macaddr[5]);
 		}
 		else
 			printf("Cannot look up key %d in the load balancer map (error: %s)\n", next, strerror(errno));
@@ -279,7 +279,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	else if (errno == ENOENT)
 		printf("The load balancer map is empty");
 	else
-		printf("Cannot get the next key from the load balancer map (error: %s)\n", next, strerror(errno));
+		printf("Cannot get the next key from the load balancer map (error: %s)\n", strerror(errno));
 	
 	uint8_t ans[8];
 	memset(ans, 0, sizeof(ans));
@@ -289,11 +289,11 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	
 	if ((strcmp(ans, "Y") = 0) || (strcmp(ans, "y") == 0)) {
 		uint32_t addrkey = 0;
-		struct serveraddr loadbalancer;
-		uint8_t serverip[INET_ADDRSTRLEN];
 		uint32_t macint[6];
-					
+
+		memset(&loadbalancer, 0, sizeof(loadbalancer));
 		memset(serverip, 0, sizeof(serverip));
+
 		printf("Enter the VIP controlled by the load balancer in the form of xxx.xxx.xxx.xxx ---> ");
 		fgets(serverip, sizeof(serverip), stdin);
 		serverip[strlen(serverip)-1] = 0;
@@ -318,7 +318,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 				printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", addrkey, serverip, loadbalancer.macaddr[0], loadbalancer[1], loadbalancer[2], loadbalancer.macaddr[3], loadbalancer.macaddr[4], loadbalancer.macaddr[5]);
 			}
 			else
-				fprintf(stderr, "Cannot confirm update entry (error: %s)\n", strerror(errno));
+				fprintf(stderr, "Cannot confirm update load balancer entry (error: %s)\n", strerror(errno));
 		}
 	}
 	

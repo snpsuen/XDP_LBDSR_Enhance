@@ -385,6 +385,7 @@ int main(int argc, char *argv[]) {
 		default:
 			ifname = argv[1];
 			interval = atoi(argv[2]);
+			break;
 	}
 
 	ifindex = if_nametoindex(ifname);
@@ -465,21 +466,24 @@ int main(int argc, char *argv[]) {
 			
 			case 2:
 				do_loadbalancer(lmfd);
-            break;
-		case 3:
-            do_disptach(ringbuf, interval);
-            break;
-		case 4:
-			exitcon = do_exit();
-            break;
-        default:
-			break;
+				break;
+			
+			case 3:
+				do_disptach(ringbuf, interval);
+				break;
+			
+			case 4:
+				exitcon = do_exit();
+				break;
+			
+			default:
+				break;
 		}
 		
 		if (exitcon == 1)
 			break;
-		
-    }
+	
+	}
 	
 	return 0
 }

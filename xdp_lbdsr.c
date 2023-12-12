@@ -18,7 +18,8 @@
 
 static volatile bool exitpoll = false;
 static void sig_handler(int sig) {
-	exitpoll = true;
+	if ((sig == SIGINT) || (sig == SIGTERM))
+		exitpoll = true;
 }
 
 static int32_t last_serverkey(int mfd) {
@@ -60,14 +61,14 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 }
 
 uint32_t headsup_dispatch(void*, void* data, size_t)  {
-	struct dispatchmsg_t* msg = (struct displatchmsg_t*)data;
+	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
 	uint8_t clientip[INET_ADDRSTRLEN];
 	uint8_t serverip[INET_ADDRSTRLEN];
 	struct serveraddr backend;
 	
 	printf("--- Received and dispatched a request! ---\n");
-	printf("Timestamp: %lld\n", msg->timestamp);
-	inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
+	printf("Timestamp: %ld\n", msg->timestamp);
+	inet_ntop(AF_INET, &(msg->saddr), (char*)clientip, INET_ADDRSTRLEN);
 	printf(" From Client IP: %s\n", str_s);
 	
 	int ret = bpf_map_lookup_elem(smfd, &(msg->backendkey), &backend);

@@ -104,13 +104,13 @@ int dispatchworkload(struct xdp_md *ctx) {
 		
 		struct serveraddr* backend = bpf_map_lookup_elem(&server_map, forward_backend);
 		if (backend == NULL) {
-			bpf_printk("Cannot look up the server for the forward backend key  %d\n", *selectedkey);
+			bpf_printk("Cannot look up the server for the forward backend key  %d\n", *forward_backend);
 			return XDP_PASS;
 		}
 		
 		for (int i = 0; i < 6; i++) {      
 			eth->h_dest[i] = backend->macaddr[i];
-			eth->h_source[i] = lbent->macaddt[i];
+			eth->h_source[i] = lbent->macaddr[i];
 		}
 		
 		struct dispatchmsg_t dmsg;

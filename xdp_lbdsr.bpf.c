@@ -85,8 +85,8 @@ int dispatchworkload(struct xdp_md *ctx) {
 				return XDP_PASS;
 			}
 			
-			uint32_t selectedindex = (bpf_get_prandom_u32() % *backendtotal) + 1
-			unit32_t* selectedkey = bpf_map_lookup_elem(&serverindex_map, &selectedindex);
+			uint32_t selectedindex = (bpf_get_prandom_u32() % *backendtotal) + 1;
+			uint32_t* selectedkey = bpf_map_lookup_elem(&serverindex_map, &selectedindex);
 			if (selectedkey == NULL) {
 				bpf_printk("Cannot look up the server key for the selected index %d\n", selectedindex);
 				return XDP_PASS;

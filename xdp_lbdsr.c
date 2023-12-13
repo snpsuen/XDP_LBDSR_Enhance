@@ -96,7 +96,10 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 		printf("Enter one of the options 1-5: ");
 		
 		uint32_t option;
-		scanf("%d%*c", &option);
+		if (scanf("%d%*c", &option) != 1) {
+			printf("Cannot read the option input properly (error: %s)\n", next, strerror(errno));
+			continue;
+		}	
 	  
 		switch(option) {
 		case 1:
@@ -133,12 +136,20 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				
 				memset(serverip, 0, sizeof(serverip));
 				printf("Enter the server IP in the form of xxx.xxx.xxx.xxx ---> ");
-				fgets(serverip, sizeof(serverip), stdin);
+				if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
+					printf("Cannot read the server IP input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
+				
 				serverip[strlen(serverip)-1] = 0;
 				inet_pton(AF_INET, serverip, &(backend.ipaddr));
 				
 				printf("Enter an MAC address in the form xx:xx:xx:xx:xx:xx --> ");
-				scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]);
+				if (scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]) != 6) {
+					printf("Cannot read the MAC address input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
+				
 				for (int i = 0; i < 6; i++)
 					backend.macaddr[i] = (uint8_t)macint[i];
 			
@@ -154,7 +165,11 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to add? (Y/N): ");
-				fgets(ans, sizeof(ans), stdin);
+				if (fgets(ans, sizeof(ans), stdin) == NULL) {
+					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
+				
 				ans[strlen(ans)-1] = 0;
 				
 				if ((strcmp(ans, "Y") != 0) && (strcmp(ans, "y") != 0))
@@ -170,23 +185,34 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				struct serveraddr backend;
 				
 				printf("Enter the server key to update: ");
-				scanf("%d%*c", &addrkey);
+				if (scanf("%d%*c", &addrkey) != 1) {
+					printf("Cannot read the server key input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
 				
 				int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
 				if (ret < 0)
 					fprintf(stderr, "Cannot find the server key %d (error: %s)\n", addrkey, strerror(errno));
 				else {
-					uint8_t serverip[INET_ADDRSTRLEN];
+					char serverip[INET_ADDRSTRLEN];
 					uint32_t macint[6];
 					
 					memset(serverip, 0, sizeof(serverip));
 					printf("Enter the IP of the server to be updated in the form of xxx.xxx.xxx.xxx ---> ");
-					fgets(serverip, sizeof(serverip), stdin);
+					if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
+						printf("Cannot read the server ip input properly (error: %s)\n", next, strerror(errno));
+						break;
+					}
+			
 					serverip[strlen(serverip)-1] = 0;
 					inet_pton(AF_INET, serverip, &(backend.ipaddr));
 					
 					printf("Enter the MAC address for the server to be updated in the form xx:xx:xx:xx:xx:xx --> ");
-					scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]);
+					if (scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]) != 6) {
+						printf("Cannot read the MAC address input properly (error: %s)\n", next, strerror(errno));
+						break;
+					}
+					
 					for (int i = 0; i < 6; i++)
 						backend.macaddr[i] = (uint8_t)macint[i];
 					
@@ -202,7 +228,10 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to update? (Y/N): ");
-				fgets(ans, sizeof(ans), stdin);
+				if (fgets(ans, sizeof(ans), stdin) == NULL) {
+					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
 				ans[strlen(ans)-1] = 0;
 				
 				if ((strcmp(ans, "Y") != 0) && (strcmp(ans, "y") != 0))
@@ -218,7 +247,10 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				struct serveraddr backend;
 				
 				printf("Enter the server key to delete: ");
-				scanf("%d%*c", &addrkey);
+				if (scanf("%d%*c", &addrkey) != 1) {
+					printf("Cannot read the server key input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
 				
 				int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
 				if (ret < 0)
@@ -236,7 +268,10 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to delete? (Y/N): ");
-				fgets(ans, sizeof(ans), stdin);
+				if (fgets(ans, sizeof(ans), stdin) == NULL) {
+					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					break;
+				}
 				ans[strlen(ans)-1] = 0;
 				
 				if ((strcmp(ans, "Y") != 0) && (strcmp(ans, "y") != 0))
@@ -285,7 +320,10 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	char ans[8];
 	memset(ans, 0, sizeof(ans));
 	printf("Do you want to continue? (Y/N):  ");
-	fgets(ans, sizeof(ans), stdin);
+	if (fgets(ans, sizeof(ans), stdin) == NULL) {
+		printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+		return 1;
+	}
 	ans[strlen(ans)-1] = 0;
 	
 	if ((strcmp(ans, "Y") = 0) || (strcmp(ans, "y") == 0)) {
@@ -296,12 +334,18 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 		memset(serverip, 0, sizeof(serverip));
 
 		printf("Enter the VIP controlled by the load balancer in the form of xxx.xxx.xxx.xxx ---> ");
-		fgets(serverip, sizeof(serverip), stdin);
+		if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
+			printf("Cannot read the server ip input properly (error: %s)\n", next, strerror(errno));
+			return 2;
+		}
 		serverip[strlen(serverip)-1] = 0;
 		inet_pton(AF_INET, serverip, &(loadbalancer.ipaddr));
 					
 		printf("Enter the MAC address of the load balancer in the form xx:xx:xx:xx:xx:xx --> ");
-		scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]);
+		if (scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]) != 6) {
+			printf("Cannot read the MAC address input properly (error: %s)\n", next, strerror(errno));
+			return 3;
+		}
 		for (int i = 0; i < 6; i++)
 			loadbalancer.macaddr[i] = (uint8_t)macint[i];
 					
@@ -356,9 +400,9 @@ uint32_t do_exit(void) {
 	
 	memset(ans, 0, sizeof(ans));
 	printf("Please confirm if you want to exit the control plane (Y/N): ");
-	if (fgets(ans, sizeof(ans), stdin) == NULL) { 
-		printf("Fail to read the input stream"); 
-		return 0;
+	if (fgets(ans, sizeof(ans), stdin) == NULL) {
+		printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+		return 1;
 	}
 	
 	ans[strlen(ans)-1] = 0;
@@ -458,7 +502,10 @@ int main(int argc, char *argv[]) {
 		printf("Enter one of the options 1-4: ");
 	
 		int option;
-		scanf("%d%*c", &option);
+		if (scanf("%d%*c", &option) != 1) {
+			printf("Cannot read the option input properly (error: %s)\n", next, strerror(errno));
+			continue;
+		}
 	  
 		switch(option) {
 			case 1:
@@ -470,7 +517,7 @@ int main(int argc, char *argv[]) {
 				break;
 			
 			case 3:
-				do_disptach(ringbuf, interval);
+				do_dispatch(ringbuf, interval);
 				break;
 			
 			case 4:
@@ -486,5 +533,5 @@ int main(int argc, char *argv[]) {
 	
 	}
 	
-	return 0
+	return 0;
 }

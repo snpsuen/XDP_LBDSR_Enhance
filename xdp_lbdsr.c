@@ -166,7 +166,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to add? (Y/N): ");
 				if (fgets(ans, sizeof(ans), stdin) == NULL) {
-					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the answer input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				
@@ -186,7 +186,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				
 				printf("Enter the server key to update: ");
 				if (scanf("%d%*c", &addrkey) != 1) {
-					printf("Cannot read the server key input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the server key input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				
@@ -200,7 +200,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					memset(serverip, 0, sizeof(serverip));
 					printf("Enter the IP of the server to be updated in the form of xxx.xxx.xxx.xxx ---> ");
 					if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
-						printf("Cannot read the server ip input properly (error: %s)\n", next, strerror(errno));
+						printf("Cannot read the server ip input properly (error: %s)\n", strerror(errno));
 						break;
 					}
 			
@@ -209,7 +209,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					
 					printf("Enter the MAC address for the server to be updated in the form xx:xx:xx:xx:xx:xx --> ");
 					if (scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]) != 6) {
-						printf("Cannot read the MAC address input properly (error: %s)\n", next, strerror(errno));
+						printf("Cannot read the MAC address input properly (error: %s)\n", strerror(errno));
 						break;
 					}
 					
@@ -229,7 +229,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to update? (Y/N): ");
 				if (fgets(ans, sizeof(ans), stdin) == NULL) {
-					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the answer input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				ans[strlen(ans)-1] = 0;
@@ -248,7 +248,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				
 				printf("Enter the server key to delete: ");
 				if (scanf("%d%*c", &addrkey) != 1) {
-					printf("Cannot read the server key input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the server key input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				
@@ -269,7 +269,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to delete? (Y/N): ");
 				if (fgets(ans, sizeof(ans), stdin) == NULL) {
-					printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the answer input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				ans[strlen(ans)-1] = 0;

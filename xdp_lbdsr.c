@@ -315,7 +315,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 
 			if (bpf_map_lookup_elem(lmfd, &addrkey, &loadbalancer) == 0) {
 				inet_ntop(AF_INET, &(loadbalancer.ipaddr), serverip, sizeof(serverip));
-				printf("Load balancer update confirmed\n")
+				printf("Load balancer update confirmed\n");
 				printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", addrkey, serverip, loadbalancer.macaddr[0], loadbalancer[1], loadbalancer[2], loadbalancer.macaddr[3], loadbalancer.macaddr[4], loadbalancer.macaddr[5]);
 			}
 			else
@@ -333,7 +333,7 @@ int32_t do_dispatch(struct ring_buffer* ringbuf, uint32_t interval) {
 	signal(SIGTERM, sig_handler);
 	
 	while (!exitpoll) {
-		printf("Press Control-C to exit the poll loop ...\n")
+		printf("Press Control-C to exit the poll loop ...\n");
 		err = ring_buffer__poll(ringbuf, interval /* timeout, ms */);
 		/* Ctrl-C will cause -EINTR */
 		if (err == -EINTR) {

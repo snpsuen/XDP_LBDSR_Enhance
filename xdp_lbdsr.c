@@ -370,7 +370,7 @@ uint32_t do_exit(void) {
 
 int main(int argc, char *argv[]) {
 	uint32_t ifindex;
-	uint8_t* ifname;
+	char* ifname;
 	uint32_t interval;
 	uint32_t exitcon = 0;
     
@@ -391,7 +391,7 @@ int main(int argc, char *argv[]) {
 
 	ifindex = if_nametoindex(ifname);
 	if (!ifindex) {
-		perror("Failed to resolve iface to ifindex (error: %s)\n", strerror(errno)");
+		printf("Failed to resolve iface to ifindex (error: %s)\n", strerror(errno)");
 		return EXIT_FAILURE;
 	}
 	
@@ -401,13 +401,13 @@ int main(int argc, char *argv[]) {
         };
 	
 	if (setrlimit(RLIMIT_MEMLOCK, &rlim)) {
-		perror("Failed to increase RLIMIT_MEMLOCK (error: %s)\n", strerror(errno)");
+		printf("Failed to increase RLIMIT_MEMLOCK (error: %s)\n", strerror(errno)");
 		return EXIT_FAILURE;
 	}
 	
 	// Load and verify BPF application
 	struct xdp_lbdsr_bpf* lbdbpf = xdp_lbdsr_bpf__open_and_load();
-	if (!lpdbpf) {
+	if (!lbdbpf) {
 		fprintf(stderr, "Failed to complete xdp_lbdsr_bpf__open_and_load (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
 	}

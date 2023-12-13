@@ -137,7 +137,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				memset(serverip, 0, sizeof(serverip));
 				printf("Enter the server IP in the form of xxx.xxx.xxx.xxx ---> ");
 				if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
-					printf("Cannot read the server IP input properly (error: %s)\n", next, strerror(errno));
+					printf("Cannot read the server IP input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				

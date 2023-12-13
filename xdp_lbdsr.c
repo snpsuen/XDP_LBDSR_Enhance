@@ -60,7 +60,7 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 	return 0;
 }
 
-uint32_t headsup_dispatch(void* ctx, void* data, size_t)  {
+int headsup_dispatch(void* ctx, void* data, size_t)  {
 	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
 	char clientip[INET_ADDRSTRLEN];
 	char serverip[INET_ADDRSTRLEN];
@@ -391,7 +391,7 @@ int main(int argc, char *argv[]) {
 
 	ifindex = if_nametoindex(ifname);
 	if (!ifindex) {
-		printf("Failed to resolve iface to ifindex (error: %s)\n", strerror(errno)");
+		printf("Failed to resolve iface to ifindex (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
 	
@@ -401,7 +401,7 @@ int main(int argc, char *argv[]) {
         };
 	
 	if (setrlimit(RLIMIT_MEMLOCK, &rlim)) {
-		printf("Failed to increase RLIMIT_MEMLOCK (error: %s)\n", strerror(errno)");
+		printf("Failed to increase RLIMIT_MEMLOCK (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
 	
@@ -415,7 +415,7 @@ int main(int argc, char *argv[]) {
 	// Attach xdp program to interface
 	struct bpf_link* lbdlink = bpf_program__attach_xdp(lbdbpf->progs.dispatchworkload, ifindex);
 	if (!lbdlink) {
-		fprintf(stderr, "Failed to complete bpf_program__attach_xdp (error: %s)\n", strerror(errno)");
+		fprintf(stderr, "Failed to complete bpf_program__attach_xdp (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
 	
@@ -445,7 +445,7 @@ int main(int argc, char *argv[]) {
 
 	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, (void*)(long)smfd, NULL);
 	if (!ringbuf) {
-		fprintf(stderr, "Failed to create ring buffer (error: %s)\n", strerror(errno)");
+		fprintf(stderr, "Failed to create ring buffer (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
 

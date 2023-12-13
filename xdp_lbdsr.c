@@ -62,13 +62,13 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 
 uint32_t headsup_dispatch(void*, void* data, size_t)  {
 	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
-	uint8_t clientip[INET_ADDRSTRLEN];
-	uint8_t serverip[INET_ADDRSTRLEN];
+	int8_t clientip[INET_ADDRSTRLEN];
+	int8_t serverip[INET_ADDRSTRLEN];
 	struct serveraddr backend;
 	
 	printf("--- Received and dispatched a request! ---\n");
 	printf("Timestamp: %ld\n", msg->timestamp);
-	inet_ntop(AF_INET, &(msg->saddr), (char*)clientip, INET_ADDRSTRLEN);
+	inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
 	printf(" From Client IP: %s\n", str_s);
 	
 	int ret = bpf_map_lookup_elem(smfd, &(msg->backendkey), &backend);
@@ -443,7 +443,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, NULL, NULL);
+	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, (void*)smfd, NULL);
 	if (!ringbuf) {
 		fprintf(stderr, "Failed to create ring buffer (error: %s)\n", strerror(errno)");
 		return EXIT_FAILURE;

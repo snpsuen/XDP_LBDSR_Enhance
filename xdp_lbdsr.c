@@ -97,7 +97,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 		
 		uint32_t option;
 		if (scanf("%d%*c", &option) != 1) {
-			printf("Cannot read the option input properly (error: %s)\n", next, strerror(errno));
+			printf("Cannot read the option input properly (error: %s)\n", strerror(errno));
 			continue;
 		}	
 	  
@@ -321,12 +321,12 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	memset(ans, 0, sizeof(ans));
 	printf("Do you want to continue? (Y/N):  ");
 	if (fgets(ans, sizeof(ans), stdin) == NULL) {
-		printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+		printf("Cannot read the answer input properly (error: %s)\n", strerror(errno));
 		return 1;
 	}
 	ans[strlen(ans)-1] = 0;
 	
-	if ((strcmp(ans, "Y") = 0) || (strcmp(ans, "y") == 0)) {
+	if ((strcmp(ans, "Y") == 0) || (strcmp(ans, "y") == 0)) {
 		uint32_t addrkey = 0;
 		uint32_t macint[6];
 
@@ -335,7 +335,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 
 		printf("Enter the VIP controlled by the load balancer in the form of xxx.xxx.xxx.xxx ---> ");
 		if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
-			printf("Cannot read the server ip input properly (error: %s)\n", next, strerror(errno));
+			printf("Cannot read the server ip input properly (error: %s)\n", strerror(errno));
 			return 2;
 		}
 		serverip[strlen(serverip)-1] = 0;
@@ -343,7 +343,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 					
 		printf("Enter the MAC address of the load balancer in the form xx:xx:xx:xx:xx:xx --> ");
 		if (scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]) != 6) {
-			printf("Cannot read the MAC address input properly (error: %s)\n", next, strerror(errno));
+			printf("Cannot read the MAC address input properly (error: %s)\n", strerror(errno));
 			return 3;
 		}
 		for (int i = 0; i < 6; i++)
@@ -360,7 +360,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 			if (bpf_map_lookup_elem(lmfd, &addrkey, &loadbalancer) == 0) {
 				inet_ntop(AF_INET, &(loadbalancer.ipaddr), serverip, sizeof(serverip));
 				printf("Load balancer update confirmed\n");
-				printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", addrkey, serverip, loadbalancer.macaddr[0], loadbalancer[1], loadbalancer[2], loadbalancer.macaddr[3], loadbalancer.macaddr[4], loadbalancer.macaddr[5]);
+				printf("Key: %d ---> VIP: %s / MAC: %x:%x:%x:%x:%x:%x \n", addrkey, serverip, loadbalancer.macaddr[0], loadbalancer.macaddr[1], loadbalancer.macaddr[2], loadbalancer.macaddr[3], loadbalancer.macaddr[4], loadbalancer.macaddr[5]);
 			}
 			else
 				fprintf(stderr, "Cannot confirm update load balancer entry (error: %s)\n", strerror(errno));
@@ -401,7 +401,7 @@ uint32_t do_exit(void) {
 	memset(ans, 0, sizeof(ans));
 	printf("Please confirm if you want to exit the control plane (Y/N): ");
 	if (fgets(ans, sizeof(ans), stdin) == NULL) {
-		printf("Cannot read the answer input properly (error: %s)\n", next, strerror(errno));
+		printf("Cannot read the answer input properly (error: %s)\n", strerror(errno));
 		return 1;
 	}
 	
@@ -503,7 +503,7 @@ int main(int argc, char *argv[]) {
 	
 		int option;
 		if (scanf("%d%*c", &option) != 1) {
-			printf("Cannot read the option input properly (error: %s)\n", next, strerror(errno));
+			printf("Cannot read the option input properly (error: %s)\n", strerror(errno));
 			continue;
 		}
 	  

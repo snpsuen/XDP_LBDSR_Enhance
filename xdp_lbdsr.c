@@ -87,12 +87,12 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 	uint32_t exithere = 0;
 	
 	while (1) {
-		printf("Backend server management:\n\n")
+		printf("Backend server management:\n\n");
 		printf("(1) List backend server map\n\n");
 		printf("(2) Add backend server\n");
 		printf("(3) Update backend server\n");
 		printf("(4) Delete backend server\n");
-		printf("(5) Exit submenu"
+		printf("(5) Exit submenu\n");
 		printf("Enter one of the options 1-5: ");
 		
 		uint32_t option;

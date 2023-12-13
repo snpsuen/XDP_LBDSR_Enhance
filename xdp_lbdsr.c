@@ -60,11 +60,12 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 	return 0;
 }
 
-uint32_t headsup_dispatch(void*, void* data, size_t)  {
+uint32_t headsup_dispatch(void* ctx, void* data, size_t)  {
 	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
 	int8_t clientip[INET_ADDRSTRLEN];
 	int8_t serverip[INET_ADDRSTRLEN];
 	struct serveraddr backend;
+	int smfd = (int)(unsigned long)ctx;
 	
 	printf("--- Received and dispatched a request! ---\n");
 	printf("Timestamp: %ld\n", msg->timestamp);
@@ -443,7 +444,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, (void*)smfd, NULL);
+	struct ring_buffer* ringbuf = ring_buffer__new(drfd, headsup_dispatch, (void*)(long)smfd, NULL);
 	if (!ringbuf) {
 		fprintf(stderr, "Failed to create ring buffer (error: %s)\n", strerror(errno)");
 		return EXIT_FAILURE;

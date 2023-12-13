@@ -62,15 +62,15 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 
 uint32_t headsup_dispatch(void* ctx, void* data, size_t)  {
 	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
-	int8_t clientip[INET_ADDRSTRLEN];
-	int8_t serverip[INET_ADDRSTRLEN];
+	char clientip[INET_ADDRSTRLEN];
+	char serverip[INET_ADDRSTRLEN];
 	struct serveraddr backend;
 	int smfd = (int)(unsigned long)ctx;
 	
 	printf("--- Received and dispatched a request! ---\n");
 	printf("Timestamp: %ld\n", msg->timestamp);
 	inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
-	printf(" From Client IP: %s\n", str_s);
+	printf(" From Client IP: %s\n", clientip);
 	
 	int ret = bpf_map_lookup_elem(smfd, &(msg->backendkey), &backend);
 	if (ret < 0)
@@ -106,7 +106,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				uint32_t* current = NULL;
 				uint32_t next;
 				struct serveraddr backend;
-				serverip[INET_ADDRSTRLEN];
+				char serverip[INET_ADDRSTRLEN];
 								
 				while (bpf_map_get_next_key(smfd, current, &next) == 0) {
 					if (bpf_map_lookup_elem(smfd, &next, &backend) == 0) {
@@ -127,9 +127,8 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 		
 		case 2:
 			while (1) {
-				uint8_t serverip[INET_ADDRSTRLEN];
+				char serverip[INET_ADDRSTRLEN];
 				int32_t macint[6];
-				uint8_t machar[6];
 				struct serveraddr backend;
 				
 				memset(serverip, 0, sizeof(serverip));
@@ -139,7 +138,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				inet_pton(AF_INET, serverip, &(backend.ipaddr));
 				
 				printf("Enter an MAC address in the form xx:xx:xx:xx:xx:xx --> ");
-				scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5])
+				scanf("%x:%x:%x:%x:%x:%x%*c", &macint[0], &macint[1], &macint[2], &macint[3], &macint[4], &macint[5]);
 				for (int i = 0; i < 6; i++)
 					backend.macaddr[i] = (uint8_t)macint[i];
 			
@@ -152,7 +151,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					build_serverindex(smfd, sifd);
 				}
 				
-				uint8_t ans[8];
+				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to add? (Y/N): ");
 				fgets(ans, sizeof(ans), stdin);
@@ -200,7 +199,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					}
 				}
 				
-				uint8_t ans[8];
+				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to update? (Y/N): ");
 				fgets(ans, sizeof(ans), stdin);
@@ -234,7 +233,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					}						
 				}
 				
-				uint8_t ans[8];
+				char ans[8];
 				memset(ans, 0, sizeof(ans));
 				printf("Any more backend server to delete? (Y/N): ");
 				fgets(ans, sizeof(ans), stdin);
@@ -251,7 +250,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 			exithere = 1;
 			break;
 			
-		case default:
+		default:
 			break;
 		
 		}
@@ -268,7 +267,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	uint32_t* current = NULL;
 	uint32_t next;
 	struct serveraddr loadbalancer;
-	uint8_t serverip[INET_ADDRSTRLEN];
+	char serverip[INET_ADDRSTRLEN];
 	
 	if (bpf_map_get_next_key(lmfd, current, &next) == 0) {
 		if (bpf_map_lookup_elem(lmfd, &next, &loadbalancer) == 0) {
@@ -283,7 +282,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 	else
 		printf("Cannot get the next key from the load balancer map (error: %s)\n", strerror(errno));
 	
-	uint8_t ans[8];
+	char ans[8];
 	memset(ans, 0, sizeof(ans));
 	printf("Do you want to continue? (Y/N):  ");
 	fgets(ans, sizeof(ans), stdin);

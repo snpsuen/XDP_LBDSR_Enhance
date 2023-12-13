@@ -371,7 +371,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 }
 		
 int32_t do_dispatch(struct ring_buffer* ringbuf, uint32_t interval) {
-	int32_t err;
+	int32_t err = 0;
 	
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);

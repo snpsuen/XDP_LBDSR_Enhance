@@ -28,8 +28,12 @@ static int32_t last_serverkey(int mfd) {
 	uint32_t next;
 	struct serveraddr backend;
 	while (bpf_map_get_next_key(mfd, current, &next) == 0) {
-		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0)
-			last = next;
+		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0) {
+			if (backend.ipaddr != 0)
+				last = next;
+			else
+				break;
+		}
 		
 		current = &next;
 	}

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: (LGPL-2.1-or-later OR BSD-2-Clause)
+
 #include "vmlinux0.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
@@ -124,3 +126,5 @@ int dispatchworkload(struct xdp_md *ctx) {
     
     return XDP_PASS;
 }
+
+char LICENSE[] SEC("license") = "Dual BSD/GPL";

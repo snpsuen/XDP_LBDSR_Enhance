@@ -137,6 +137,12 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 		
 		case 2:
 			while (1) {
+				uint32_t addrkey = last_serverkey(smfd) + 1;
+				if (addrkey > 1023) {
+					printf("The backend server map is full\n");
+					break;
+				}
+				
 				char serverip[INET_ADDRSTRLEN];
 				int32_t macint[6];
 				struct serveraddr backend;
@@ -160,7 +166,6 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				for (int i = 0; i < 6; i++)
 					backend.macaddr[i] = (uint8_t)macint[i];
 			
-				uint32_t addrkey = last_serverkey(smfd) + 1;
 				int ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
 				if (ret < 0)
 					fprintf(stderr, "Cannot add an backend server at key %d (error: %s)\n", addrkey, strerror(errno));

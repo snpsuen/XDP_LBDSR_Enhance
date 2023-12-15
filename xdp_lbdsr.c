@@ -118,6 +118,8 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 								
 				while (bpf_map_get_next_key(smfd, current, &next) == 0) {
 					if (bpf_map_lookup_elem(smfd, &next, &backend) == 0) {
+						if (backend.ipaddr == 0)
+							break;
 						inet_ntop(AF_INET, &(backend.ipaddr), serverip, sizeof(serverip));
 						printf("Key: %d ---> IP: %s / MAC: %x:%x:%x:%x:%x:%x \n", next, serverip, backend.macaddr[0], backend.macaddr[1], backend.macaddr[2], backend.macaddr[3], backend.macaddr[4], backend.macaddr[5]);
 					}

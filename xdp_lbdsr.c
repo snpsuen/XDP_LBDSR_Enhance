@@ -29,10 +29,9 @@ static int32_t last_serverkey(int mfd) {
 	struct serveraddr backend;
 	while (bpf_map_get_next_key(mfd, current, &next) == 0) {
 		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0) {
-			if (backend.ipaddr != 0)
-				last = next;
-			else
+			if (backend.ipaddr == 0)
 				break;
+			last = next;
 		}
 		
 		current = &next;
@@ -50,6 +49,8 @@ static uint32_t build_serverindex(int smfd, int sifd) {
 	
 	while (bpf_map_get_next_key(smfd, current, &next) == 0) {
 		if (bpf_map_lookup_elem(smfd, &next, &backend) == 0) {
+			if (backend.ipaddr == 0)
+				break;
 			bpf_map_update_elem(sifd, &index, &next, BPF_ANY);
 			count++;
 			index++;
@@ -92,7 +93,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 	
 	while (1) {
 		printf("Backend server management:\n\n");
-		printf("(1) List backend server map\n\n");
+		printf("(1) List backend server map\n");
 		printf("(2) Add backend server\n");
 		printf("(3) Update backend server\n");
 		printf("(4) Delete backend server\n");

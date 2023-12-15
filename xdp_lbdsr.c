@@ -139,7 +139,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 			while (1) {
 				uint32_t addrkey = last_serverkey(smfd) + 1;
 				if (addrkey > 1023) {
-					printf("The backend server map is full\n");
+					printf("The backend server map is already full\n");
 					break;
 				}
 				
@@ -263,6 +263,49 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 					printf("Cannot read the server key input properly (error: %s)\n", strerror(errno));
 					break;
 				}
+
+				uint32_t lastkey = last_serverkey(smfd);
+				if (addrkey == lastkey) {
+					int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
+					if (ret < 0)
+						fprintf(stderr, "Cannot find the server key %d (error: %s)\n", addrkey, strerror(errno));
+					else {
+						memset(&backend, 0, sizeof(backend)));
+						ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
+						if (ret < 0)
+							fprintf(stderr, "Cannot annull the backend server at the given key %d (error: %s)\n", addrkey, strerror(errno));
+						else {
+							fprintf(stderr, "Annulled the backend server at the given key %d\n", addrkey);
+							build_serverindex(smfd, sifd);
+						}
+					}
+				}
+				else {
+					int ret = bpf_map_lookup_elem(smfd, &lastkey, &backend);
+					if (ret < 0)
+						fprintf(stderr, "Cannot find the last server key %d (error: %s)\n", addrkey, strerror(errno));
+					else {
+						ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
+						if (ret < 0)
+							fprintf(stderr, "Cannot move the backend server from the last key %d to the vacated key %d (error: %s)\n", lastkey, addrkey, strerror(errno));
+						else {
+							fprintf(stderr, "Moved the backend server from the last key %d to the vacated key %d", lastkey, addrkey);
+							memset(&backend, 0, sizeof(backend)));
+							ret = bpf_map_update_elem(smfd, &lastkey, &backend, BPF_ANY);
+							if (ret < 0)
+								fprintf(stderr, "Cannot annull the backend server at the last key %d (error: %s)\n", lastkey, strerror(errno));
+							else {
+								fprintf(stderr, "Annulled the backend server at the last key %d\n", lastkey);
+								build_serverindex(smfd, sifd);
+							}
+						}
+					}	
+							build_serverindex(smfd, sifd);
+				}
+						
+					
+						
+					
 				
 				int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
 				if (ret < 0)

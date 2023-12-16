@@ -20,17 +20,9 @@ struct {
 } lb_map SEC(".maps");
 
 struct {
-    __uint(type, BPF_MAP_TYPE_ARRAY);
-	__type(key, uint32_t);
-	__type(value, uint32_t);
-	__uint(max_entries, 1024);
-} serverindex_map SEC(".maps");
-
-struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
     __uint(max_entries, 64 * 4096);
 } dispatch_ring SEC(".maps");
-
 
 struct {
 	__uint(type, BPF_MAP_TYPE_HASH);

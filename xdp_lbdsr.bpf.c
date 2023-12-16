@@ -98,20 +98,14 @@ int dispatchworkload(struct xdp_md *ctx) {
 				return XDP_PASS;
 			}
 			
-			uint32_t selectedindex = (bpf_get_prandom_u32() % *backendtotal) + 1;
-			uint32_t* selectedkey = bpf_map_lookup_elem(&serverindex_map, &selectedindex);
-			if (selectedkey == NULL) {
-				bpf_printk("Cannot look up the server key for the selected index %d\n", selectedindex);
-				return XDP_PASS;
-			}
-			
-			struct serveraddr* newbackend = bpf_map_lookup_elem(&server_map, selectedkey);
+			uint32_t selectedkey = bpf_get_prandom_u32() % total;
+			struct serveraddr* newbackend = bpf_map_lookup_elem(&server_map, &selectedkey);
 			if (newbackend == NULL) {
 				bpf_printk("Cannot look up the new backend for the selected server key  %d\n", *selectedkey);
 				return XDP_PASS;
 			}
 			
-			forward_backend = selectedkey;
+			forward_backend = &selectedkey;
 			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
 		}
 		

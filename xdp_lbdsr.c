@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <errno.h>
 #include <sys/resource.h>
 #include <sys/time.h>
@@ -124,7 +125,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 						printf("Key: %d ---> IP: %s / MAC: %x:%x:%x:%x:%x:%x \n", next, serverip, backend.macaddr[0], backend.macaddr[1], backend.macaddr[2], backend.macaddr[3], backend.macaddr[4], backend.macaddr[5]);
 					}
 					else
-						printf("Cannot look up key %d in the load balancer map (error: %s)\n", next, strerror(errno));
+						printf("Cannot look up the next key %d in the load balancer map (error: %s)\n", next, strerror(errno));
 					
 					current = &next;
 				}
@@ -148,13 +149,16 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				struct serveraddr backend;
 				
 				memset(serverip, 0, sizeof(serverip));
-				printf("Enter the server IP in the form of xxx.xxx.xxx.xxx ---> ");
+				printf("Enter the server IP in the form of xxx.xxx.xxx.xxx or Q/q to quit: ");
 				if (fgets(serverip, sizeof(serverip), stdin) == NULL) {
 					printf("Cannot read the server IP input properly (error: %s)\n", strerror(errno));
 					break;
 				}
 				
 				serverip[strlen(serverip)-1] = 0;
+				if ((strncmp(serverip, "Q", 1) == 0) || (strncmp(serverip, "q", 1) == 0))
+					break;
+				
 				inet_pton(AF_INET, serverip, &(backend.ipaddr));
 				
 				printf("Enter an MAC address in the form xx:xx:xx:xx:xx:xx --> ");
@@ -168,11 +172,9 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 			
 				int ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
 				if (ret < 0)
-					fprintf(stderr, "Cannot add an backend server at key %d (error: %s)\n", addrkey, strerror(errno));
-				else {
+					fprintf(stderr, "Cannot add a backend server at key %d (error: %s)\n", addrkey, strerror(errno));
+				else
 					fprintf(stderr, "Added a backend server at key %d (error: %s)\n", addrkey, strerror(errno));
-					build_serverindex(smfd, sifd);
-				}
 				
 				char ans[8];
 				memset(ans, 0, sizeof(ans));
@@ -184,7 +186,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				
 				ans[strlen(ans)-1] = 0;
 				
-				if ((strcmp(ans, "Y") != 0) && (strcmp(ans, "y") != 0))
+				if ((strncmp(ans, "Y", 1) != 0) && (strncmp(ans, "y", 1) != 0))
 					break;
 				
 			}
@@ -193,14 +195,17 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 			
 		case 3:
 			while (1) {
-				uint32_t addrkey;
+				int32_t addrkey;
 				struct serveraddr backend;
 				
-				printf("Enter the server key to update: ");
+				printf("Enter the server key to update or -1 to quit: ");
 				if (scanf("%d%*c", &addrkey) != 1) {
 					printf("Cannot read the server key input properly (error: %s)\n", strerror(errno));
 					break;
 				}
+
+				if (addrkey < 0)
+					break;
 				
 				int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
 				if (ret < 0)
@@ -246,7 +251,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t sifd) {
 				}
 				ans[strlen(ans)-1] = 0;
 				
-				if ((strcmp(ans, "Y") != 0) && (strcmp(ans, "y") != 0))
+				if ((strncmp(ans, "Y", 1) != 0) && (strncmp(ans, "y", 1) != 0))
 					break;
 				
 			}

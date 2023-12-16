@@ -248,14 +248,14 @@ uint32_t do_backend(uint32_t smfd) {
 					break;
 
 				uint32_t lastkey = last_serverkey(smfd);
-				if (addrkey == lastkey) {
+				if ((uint32_t)addrkey == lastkey) {
 					int ret = bpf_map_lookup_elem(smfd, &addrkey, &backend);
 					if (ret < 0) {
 						fprintf(stderr, "Cannot find the server key %d (error: %s)\n", addrkey, strerror(errno));
 						continue;
 					}
 					
-					memset(&backend, 0, sizeof(backend)));
+					memset(&backend, 0, sizeof(backend));
 					ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
 					if (ret < 0) {
 						fprintf(stderr, "Cannot annull the backend server at the given key %d (error: %s)\n", addrkey, strerror(errno));
@@ -278,7 +278,7 @@ uint32_t do_backend(uint32_t smfd) {
 					}
 					
 					fprintf(stderr, "Moved the backend server from the last key %d to the vacated key %d", lastkey, addrkey);
-					memset(&backend, 0, sizeof(backend)));
+					memset(&backend, 0, sizeof(backend));
 					ret = bpf_map_update_elem(smfd, &lastkey, &backend, BPF_ANY);
 					if (ret < 0) {
 						fprintf(stderr, "Cannot annull the backend server at the last key %d (error: %s)\n", lastkey, strerror(errno));

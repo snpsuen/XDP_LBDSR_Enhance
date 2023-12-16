@@ -71,6 +71,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 	}
 		
 	if (iph->daddr == lbent->ipaddr) {
+		struct serveraddr* backend;
 		struct five_tuple forward_key = {};
 		forward_key.protocol = iph->protocol;
 		forward_key.ip_source = iph->saddr;
@@ -99,8 +100,8 @@ int dispatchworkload(struct xdp_md *ctx) {
 			}
 			
 			uint32_t selectedkey = bpf_get_prandom_u32() % total;
-			struct serveraddr* newbackend = bpf_map_lookup_elem(&server_map, &selectedkey);
-			if (newbackend == NULL) {
+			backend = bpf_map_lookup_elem(&server_map, &selectedkey);
+			if (backend == NULL) {
 				bpf_printk("Cannot look up the new backend for the selected server key  %d\n", *selectedkey);
 				return XDP_PASS;
 			}
@@ -108,11 +109,12 @@ int dispatchworkload(struct xdp_md *ctx) {
 			forward_backend = &selectedkey;
 			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
 		}
-		
-		struct serveraddr* backend = bpf_map_lookup_elem(&server_map, forward_backend);
-		if (backend == NULL) {
-			bpf_printk("Cannot look up the server for the forward backend key  %d\n", *forward_backend);
-			return XDP_PASS;
+		else {
+			backend = bpf_map_lookup_elem(&server_map, forward_backend);
+			if (backend == NULL) {
+				bpf_printk("Cannot look up the server for the forward backend key  %d\n", *forward_backend);
+				return XDP_PASS;
+			}
 		}
 		
 		for (int i = 0; i < 6; i++) {      

@@ -14,7 +14,7 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    project: dsr
+    condition: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -29,7 +29,7 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    project: dsr
+    condition: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -44,7 +44,7 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    project: dsr
+    condition: dsr
 ---
 apiVersion: v1
 kind: Pod

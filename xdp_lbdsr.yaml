@@ -49,11 +49,11 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: curlclient
+  name: curlybox01
 spec:
   containers:
-  - image: curlimages/curl:latest
-    name: curlclient
+  - image: ferrgo/curlybox
+    name: curlybox01
     command:
     - sleep
     - infinity

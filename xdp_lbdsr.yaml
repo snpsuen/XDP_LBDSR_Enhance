@@ -13,6 +13,8 @@ spec:
     - infinity
     securityContext:
       privileged: true
+  nodeSelector:
+    loadbalancer: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -26,6 +28,8 @@ spec:
     - containerPort: 80
     securityContext:
       privileged: true
+  nodeSelector:
+    loadbalancer: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -39,3 +43,5 @@ spec:
     - containerPort: 80
     securityContext:
       privileged: true
+  nodeSelector:
+    loadbalancer: dsr

@@ -14,7 +14,7 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    loadbalancer: dsr
+    project: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -29,7 +29,7 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    loadbalancer: dsr
+    project: dsr
 ---
 apiVersion: v1
 kind: Pod
@@ -44,4 +44,18 @@ spec:
     securityContext:
       privileged: true
   nodeSelector:
-    loadbalancer: dsr
+    project: dsr
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curlclient
+spec:
+  containers:
+  - image: curlimages/curl:latest
+    name: curlclient
+    command:
+    - sleep
+    - infinity
+    securityContext:
+      privileged: true

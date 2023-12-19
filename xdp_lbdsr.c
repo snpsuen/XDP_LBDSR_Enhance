@@ -545,6 +545,12 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	
+	int tmfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "totalserver_map");
+	if (tmfd < 0) {
+		fprintf(stderr, "Failed to find the fd for the load balancer map (error: %s))\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+
 	int lmfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "lb_map");
 	if (lmfd < 0) {
 		fprintf(stderr, "Failed to find the fd for the load balancer map (error: %s))\n", strerror(errno));
@@ -579,7 +585,7 @@ int main(int argc, char *argv[]) {
 	  
 		switch(option) {
 			case 1:
-				do_backend(smfd);
+				do_backend(smfd, tmfd);
 				break;
 			
 			case 2:

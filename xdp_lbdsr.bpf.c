@@ -74,7 +74,8 @@ int dispatchworkload(struct xdp_md *ctx) {
 		uint32_t* forward_backend = bpf_map_lookup_elem(&forward_flow, &forward_key);
 		if (forward_backend == NULL) {
 			uint32_t total = 0;
-			for (uint32_t addrkey = 0; addrkey < 1024; addrkey++) {
+			uint32_t addrkey;
+			for (addrkey = 0; addrkey < 1024; addrkey++) {
 				struct serveraddr* backend = bpf_map_lookup_elem(&server_map, &addrkey);
 				if (backend == NULL) {
 					bpf_printk("NULL server map entry found\n");

@@ -41,6 +41,26 @@ static int32_t last_serverkey(int mfd) {
 	return last;
 }
 
+static uint32_t total_server(int mfd) {
+	uint32_t* current = NULL;
+	unt32_t total = 0;
+	uint32_t next;
+	struct serveraddr backend;
+	while (bpf_map_get_next_key(mfd, current, &next) == 0) {
+		if (bpf_map_lookup_elem(mfd, &next, &backend) == 0) {
+			if (backend.ipaddr == 0)
+				break;
+			total++;
+		}
+		
+		current = &next;
+	}
+	
+	return total;
+}
+
+
+
 int headsup_dispatch(void* ctx, void* data, size_t)  {
 	struct dispatchmsg_t* msg = (struct dispatchmsg_t*)data;
 	char clientip[INET_ADDRSTRLEN];
@@ -64,7 +84,7 @@ int headsup_dispatch(void* ctx, void* data, size_t)  {
 	return 0;
 }
 
-uint32_t do_backend(uint32_t smfd) {
+uint32_t do_backend(uint32_t smfd, uint32_t tmfd) {
 	uint32_t exithere = 0;
 	
 	while (1) {
@@ -147,6 +167,21 @@ uint32_t do_backend(uint32_t smfd) {
 				int ret = bpf_map_update_elem(smfd, &addrkey, &backend, BPF_ANY);
 				if (ret < 0) {
 					fprintf(stderr, "Cannot add a backend server at key %d (error: %s)\n", addrkey, strerror(errno));
+					continue;
+				}
+
+				uint32_t total;
+				uint32_t totalkey = 0;
+				ret = bpf_map_lookup_elem(tmfd, &totalkey, &total);
+				if (ret < 0) {
+					fprintf(stderr, "Cannot look up the key %d for the total number of backend servers (error: %s)\n", totalkey, strerror(errno));
+					continue;
+				}
+
+				total++;
+				int ret = bpf_map_update_elem(tmfd, &totalkey, &total, BPF_ANY);
+				if (ret < 0) {
+					fprintf(stderr, "Cannot update the total number of backend servers at key %d (error: %s)\n", totalkey, strerror(errno));
 					continue;
 				}
 				
@@ -261,7 +296,7 @@ uint32_t do_backend(uint32_t smfd) {
 						fprintf(stderr, "Cannot annull the backend server at the given key %d (error: %s)\n", addrkey, strerror(errno));
 						continue;
 					}
-					
+				
 					fprintf(stderr, "Annulled the backend server at the given key %d\n", addrkey);
 				}
 				else {
@@ -286,6 +321,21 @@ uint32_t do_backend(uint32_t smfd) {
 					}
 					
 					fprintf(stderr, "Annulled the backend server at the last key %d\n", lastkey);
+				}
+
+				uint32_t total;
+				uint32_t totalkey = 0;
+				ret = bpf_map_lookup_elem(tmfd, &totalkey, &total);
+				if (ret < 0) {
+					fprintf(stderr, "Cannot look up the key %d for the total number of backend servers (error: %s)\n", totalkey, strerror(errno));
+					continue;
+				}
+
+				total--;
+				int ret = bpf_map_update_elem(tmfd, &totalkey, &total, BPF_ANY);
+				if (ret < 0) {
+					fprintf(stderr, "Cannot update the total number of backend servers at key %d (error: %s)\n", totalkey, strerror(errno));
+					continue;
 				}
 					
 				char ans[8];

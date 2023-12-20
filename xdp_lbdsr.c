@@ -71,7 +71,7 @@ int headsup_dispatch(void* ctx, void* data, size_t)  {
 	printf("--- Received and dispatched a request! ---\n");
 	printf("Timestamp: %ld\n", msg->timestamp);
 	inet_ntop(AF_INET, &(msg->saddr), clientip, INET_ADDRSTRLEN);
-	printf(" From Client IP: %s\n", clientip);
+	printf("From Client IP: %s\n", clientip);
 	
 	int ret = bpf_map_lookup_elem(smfd, &(msg->backendkey), &backend);
 	if (ret < 0)
@@ -105,7 +105,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t tmfd) {
 		switch(option) {
 		case 1:
 			if (last_serverkey(smfd) < 0)
-				printf("The backend server map is empty");
+				printf("The backend server map is empty\n");
 			else {
 				uint32_t* current = NULL;
 				uint32_t next;
@@ -386,7 +386,7 @@ uint32_t do_loadbalancer(uint32_t lmfd) {
 			printf("Cannot look up key %d in the load balancer map (error: %s)\n", next, strerror(errno));
 	}
 	else if (errno == ENOENT)
-		printf("The load balancer map is empty");
+		printf("The load balancer map is empty\n");
 	else
 		printf("Cannot get the next key from the load balancer map (error: %s)\n", strerror(errno));
 	

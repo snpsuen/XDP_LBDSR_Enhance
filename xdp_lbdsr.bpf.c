@@ -100,7 +100,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 				return XDP_PASS;
 			}
 
-			forward_backend = &selectedkey
+			forward_backend = &selectedkey;
 			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
 		}
 		else {

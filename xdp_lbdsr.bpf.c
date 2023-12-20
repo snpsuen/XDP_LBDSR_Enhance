@@ -80,7 +80,6 @@ int dispatchworkload(struct xdp_md *ctx) {
 		
 		uint32_t* forward_backend = bpf_map_lookup_elem(&forward_flow, &forward_key);
 		if (forward_backend == NULL) {
-			uint32_t totalkey = 0;
 			uint32_t* totalptr = bpf_map_lookup_elem(&totalserver_map, &totalkey);
 
 			if (totalptr == NULL) {
@@ -100,8 +99,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 				return XDP_PASS;
 			}
 			
-			forward_backend = &selectedkey;
-			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
+			bpf_map_update_elem(&forward_flow, &forward_key, &selectedkey, BPF_ANY);
 		}
 		else {
 			backend = bpf_map_lookup_elem(&server_map, forward_backend);
@@ -121,8 +119,12 @@ int dispatchworkload(struct xdp_md *ctx) {
 		dmsg.saddr = iph->saddr;
 		dmsg.backendkey = *forward_backend;
 		bpf_ringbuf_output(&dispatch_ring, &dmsg, sizeof(dmsg), BPF_RB_FORCE_WAKEUP);
-        
-        return XDP_TX;
+
+		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
+		bpf_printk("Before XDP_TX, eth->h_source[5] = %x, eth->h_dest[5] = %x", eth->h_source[5], eth->h_dest[5]);
+		bpf_printk("Returning XDP_TX ...");
+		
+		return XDP_TX;
     }
     
     return XDP_PASS;

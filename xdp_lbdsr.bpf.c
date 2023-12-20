@@ -99,8 +99,9 @@ int dispatchworkload(struct xdp_md *ctx) {
 				bpf_printk("Cannot look up the new backend for the selected server key  %d\n", selectedkey);
 				return XDP_PASS;
 			}
-			
-			bpf_map_update_elem(&forward_flow, &forward_key, &selectedkey, BPF_ANY);
+
+			forward_backend = &selectedkey
+			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
 		}
 		else {
 			backend = bpf_map_lookup_elem(&server_map, forward_backend);

@@ -80,9 +80,8 @@ int dispatchworkload(struct xdp_md *ctx) {
 		
 		uint32_t* forward_backend = bpf_map_lookup_elem(&forward_flow, &forward_key);
 		if (forward_backend == NULL) {
-			uint32_t total = 0;
 			uint32_t totalkey = 0;
-			uint32_t* totalptr = bpf_map_lookup_elem(&total_servermap, &totalkey);
+			uint32_t* totalptr = bpf_map_lookup_elem(&totalserver_map, &totalkey);
 			
 			if (*totalptr == 0) {
 				bpf_printk("Server map is empty");

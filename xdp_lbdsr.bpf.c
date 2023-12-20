@@ -15,7 +15,7 @@ struct {
 struct {
     __uint(type, BPF_MAP_TYPE_ARRAY);
 	__type(key, uint32_t);
-	__type(key, uint32_t);
+	__type(value, uint32_t);
 	__uint(max_entries, 1);
 } totalserver_map SEC(".maps");
 
@@ -82,7 +82,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 		if (forward_backend == NULL) {
 			uint32_t total = 0;
 			uint32_t totalkey = 0;
-			uint32* totalptr = bpf_map_lookup_elem(&total_map, &totalkey);
+			uint32_t* totalptr = bpf_map_lookup_elem(&total_servermap, &totalkey);
 			
 			if (*totalptr == 0) {
 				bpf_printk("Server map is empty");

@@ -82,6 +82,11 @@ int dispatchworkload(struct xdp_md *ctx) {
 		if (forward_backend == NULL) {
 			uint32_t totalkey = 0;
 			uint32_t* totalptr = bpf_map_lookup_elem(&totalserver_map, &totalkey);
+
+			if (totalptr == NULL) {
+				bpf_printk("Cannot look up the total number of backend servers\n");
+				return XDP_PASS;
+			}
 			
 			if (*totalptr == 0) {
 				bpf_printk("Server map is empty");

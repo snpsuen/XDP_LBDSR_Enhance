@@ -123,7 +123,8 @@ int dispatchworkload(struct xdp_md *ctx) {
 		bpf_ringbuf_output(&dispatch_ring, &dmsg, sizeof(dmsg), BPF_RB_FORCE_WAKEUP);
 
 		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
-		bpf_printk("Before XDP_TX, eth->h_source[5] = %x, eth->h_dest[5] = %x", eth->h_source[5], eth->h_dest[5]);
+		bpf_printk("Before XDP_TX, eth->h_source = %x:%x:%x:%x:%x:%x", eth->h_source[0], eth->h_source[1], eth->h_source[2], eth->h_source[3], eth->h_source[4], eth->h_source[5]);
+		bpf_printk("Before XDP_TX, eth->h_dest = %x:%x:%x:%x:%x:%x", eth->h_dest[0], eth->h_dest[1], eth->h_dest[2], eth->h_dest[3], eth->h_dest[4], eth->h_dest[5]);
 		bpf_printk("Returning XDP_TX ...");
 		
 		return XDP_TX;

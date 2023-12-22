@@ -99,9 +99,9 @@ int dispatchworkload(struct xdp_md *ctx) {
 				bpf_printk("Cannot look up the new backend for the selected server key  %d\n", selectedkey);
 				return XDP_PASS;
 			}
-
-			forward_backend = &selectedkey;
-			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
+			
+			bpf_map_update_elem(&forward_flow, &forward_key, &selectedkey, BPF_ANY);
+			bpf_printk("Added a new entry to the forward flow table for the selected backend server key %d\n", selectedkey);
 		}
 		else {
 			backend = bpf_map_lookup_elem(&server_map, forward_backend);
@@ -109,6 +109,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 				bpf_printk("Cannot look up the server for the forward backend key  %d\n", *forward_backend);
 				return XDP_PASS;
 			}
+			 bpf_printk("Located the backend server key from an existing entry in the forward flow table ", *forward_backend);
 		}
 		
 		for (int i = 0; i < 6; i++) {      

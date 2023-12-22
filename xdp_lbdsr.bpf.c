@@ -129,7 +129,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 		bpf_printk("Before XDP_TX, eth->h_source = %x:%x:%x:", eth->h_source[0], eth->h_source[1], eth->h_source[2]);
 		bpf_printk("%x:%x:%x\n", eth->h_source[3], eth->h_source[4], eth->h_source[5]);
 		bpf_printk("Before XDP_TX, eth->h_dest = %x:%x:%x:", eth->h_dest[0], eth->h_dest[1], eth->h_dest[2]);
-		bpf_printk("%x:%x:%x\n", eth->h_dest[3], eth->dest[4], eth->h_dest[5]);
+		bpf_printk("%x:%x:%x\n", eth->h_dest[3], eth->h_dest[4], eth->h_dest[5]);
 		bpf_printk("Returning XDP_TX ...");
 		
 		return XDP_TX;

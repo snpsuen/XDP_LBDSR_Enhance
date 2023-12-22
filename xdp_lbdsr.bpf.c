@@ -116,6 +116,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 			eth->h_dest[i] = backend->macaddr[i];
 			eth->h_source[i] = lbent->macaddr[i];
 		}
+		bpf_printk("Packet to be forwrded to the backend server key %d\n", *forward_backend); 
 		
 		struct dispatchmsg_t dmsg;
 		dmsg.timestamp = bpf_ktime_get_ns();

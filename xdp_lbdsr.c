@@ -185,7 +185,7 @@ uint32_t do_backend(uint32_t smfd, uint32_t tmfd) {
 					continue;
 				}
 				
-				fprintf(stderr, "Added a backend server at key %d (error: %s)\n", addrkey, strerror(errno));
+				fprintf(stderr, "Added a backend server at key %d\n", addrkey);
 				
 				char ans[8];
 				memset(ans, 0, sizeof(ans));

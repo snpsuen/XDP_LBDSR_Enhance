@@ -112,18 +112,20 @@ int dispatchworkload(struct xdp_md *ctx) {
 			}
 			 bpf_printk("Located the backend server key from an existing entry in the forward flow table ", *forward_backend);
 		}
-		
+
+		bpf_printk("Packet to be forwrded to the backend server key %d\n", *forward_backend); 
 		for (int i = 0; i < 6; i++) {      
 			eth->h_dest[i] = backend->macaddr[i];
 			eth->h_source[i] = lbent->macaddr[i];
 		}
-		bpf_printk("Packet to be forwrded to the backend server key %d\n", *forward_backend); 
-		
+
+		/*
 		struct dispatchmsg_t dmsg;
 		dmsg.timestamp = bpf_ktime_get_ns();
 		dmsg.saddr = iph->saddr;
 		dmsg.backendkey = *forward_backend;
 		bpf_ringbuf_output(&dispatch_ring, &dmsg, sizeof(dmsg), BPF_RB_FORCE_WAKEUP);
+		*/
 
 		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
 		bpf_printk("Before XDP_TX, eth->h_source = %x:%x:%x:", eth->h_source[0], eth->h_source[1], eth->h_source[2]);

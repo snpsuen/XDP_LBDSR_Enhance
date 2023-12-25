@@ -44,6 +44,8 @@ SEC("xdp")
 int dispatchworkload(struct xdp_md *ctx) {
 	void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
+
+	bpf_printk("got something");
 	
 	struct ethhdr *eth = (struct ethhdr*)data;
 	if ((void*)eth + sizeof(struct ethhdr) > data_end)
@@ -68,8 +70,14 @@ int dispatchworkload(struct xdp_md *ctx) {
 		bpf_printk("The load balancer map is empty\n");
 		return XDP_PASS;
 	}
+
+	bpf_printk("Got TCP packet travelling from port %d to %d", bpf_ntohs(tcph->source), bpf_ntohs(tcph->dest));
+	bpf_printk("Got TCP packet travelling from IP %x to %x", iph->saddr, iph->daddr);
 		
 	if (iph->daddr == lbent->ipaddr) {
+		bpf_printk("Got TCP packet travelling from port %d to %d", bpf_ntohs(tcph->source), bpf_ntohs(tcph->dest));
+		bpf_printk("Got TCP packet travelling from IP %x to %x", iph->saddr, iph->daddr);
+	
 		struct serveraddr* backend;
 		struct five_tuple forward_key = {};
 		forward_key.protocol = iph->protocol;
@@ -102,31 +110,38 @@ int dispatchworkload(struct xdp_md *ctx) {
 
 			forward_backend = &selectedkey;
 			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
-			bpf_printk("Added a new entry to the forward flow table for the selected backend server key %d\n", selectedkey);
+			bpf_printk("Added a new entry to the forward flow table for the selected backend server key %d", selectedkey);
 		}
 		else {
 			backend = bpf_map_lookup_elem(&server_map, forward_backend);
 			if (backend == NULL) {
-				bpf_printk("Cannot look up the server for the forward backend key  %d\n", *forward_backend);
+				bpf_printk("Cannot look up the server for the forward backend key %d\n", *forward_backend);
 				return XDP_PASS;
 			}
 			 bpf_printk("Located the backend server key from an existing entry in the forward flow table ", *forward_backend);
 		}
 
-		bpf_printk("Packet to be forwrded to the backend server key %d\n", *forward_backend); 
+		bpf_printk("Packet to be forwrded to the backend server key %d", *forward_backend);
+		eth->h_dest[5] = backend->macaddr[5];
+		eth->h_source[5] = lbent->macaddr[5];
+
+		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
+		bpf_printk("Before XDP_TX, eth->h_source[5] = %x, eth->h_dest[5] = %x", eth->h_source[5], eth->h_dest[5]);
+		bpf_printk("Returning XDP_TX ...");
+		return XDP_TX;
+
+		/* 
 		for (int i = 0; i < 6; i++) {      
 			eth->h_dest[i] = backend->macaddr[i];
 			eth->h_source[i] = lbent->macaddr[i];
 		}
-
-		/*
+  
 		struct dispatchmsg_t dmsg;
 		dmsg.timestamp = bpf_ktime_get_ns();
 		dmsg.saddr = iph->saddr;
 		dmsg.backendkey = *forward_backend;
 		bpf_ringbuf_output(&dispatch_ring, &dmsg, sizeof(dmsg), BPF_RB_FORCE_WAKEUP);
-		*/
-
+		
 		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
 		bpf_printk("Before XDP_TX, eth->h_source = %x:%x:%x:", eth->h_source[0], eth->h_source[1], eth->h_source[2]);
 		bpf_printk("%x:%x:%x\n", eth->h_source[3], eth->h_source[4], eth->h_source[5]);
@@ -135,6 +150,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 		bpf_printk("Returning XDP_TX ...");
 		
 		return XDP_TX;
+		*/
     }
     
     return XDP_PASS;

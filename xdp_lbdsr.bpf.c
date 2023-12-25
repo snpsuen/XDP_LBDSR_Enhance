@@ -75,8 +75,9 @@ int dispatchworkload(struct xdp_md *ctx) {
 	bpf_printk("Got TCP packet travelling from IP %x to %x", iph->saddr, iph->daddr);
 		
 	if (iph->daddr == lbent->ipaddr) {
-		bpf_printk("Got TCP packet travelling from port %d to %d", bpf_ntohs(tcph->source), bpf_ntohs(tcph->dest));
-		bpf_printk("Got TCP packet travelling from IP %x to %x", iph->saddr, iph->daddr);
+		bpf_printk("Packet sent from the client %x", iph->saddr);
+		bpf_printk("Packet with tcp source port %d", bpf_ntohs(tcph->source));
+		bpf_printk("Packet with tcp destination port %d", bpf_ntohs(tcph->dest));
 	
 		struct serveraddr* backend;
 		struct five_tuple forward_key = {};

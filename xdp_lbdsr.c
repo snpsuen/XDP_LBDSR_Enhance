@@ -533,11 +533,20 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Attach xdp program to interface
-	struct bpf_link* lbdlink = bpf_program__attach_xdp(lbdbpf->progs.dispatchworkload, ifindex);
+	int progfd =  bpf_program__fd(lbdbpf->progs.dispatchworkload);
+	uint32_t xdpflag = XDP_FLAGS_UPDATE_IF_NOEXIST;
+	xdpflag |= XDP_FLAGS_SKB_MODE;
+	
+	if (bpf_xdp_attach(ifindex, progfd, xdpflag, NULL) < 0) {
+		fprintf(stderr, "Failed to complete bpf_xdp_attach (error: %s)\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+	
+	/* struct bpf_link* lbdlink = bpf_program__attach_xdp(lbdbpf->progs.dispatchworkload, ifindex);
 	if (!lbdlink) {
 		fprintf(stderr, "Failed to complete bpf_program__attach_xdp (error: %s)\n", strerror(errno));
 		return EXIT_FAILURE;
-	}
+	} */
 	
 	int smfd = bpf_object__find_map_fd_by_name(lbdbpf->obj, "server_map");
 	if (smfd < 0) {

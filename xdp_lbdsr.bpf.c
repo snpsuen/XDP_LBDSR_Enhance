@@ -111,7 +111,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 
 			forward_backend = &selectedkey;
 			bpf_map_update_elem(&forward_flow, &forward_key, forward_backend, BPF_ANY);
-			bpf_printk("Added a new entry to the forward flow table for the selected backend server key %d", selectedkey);
+			bpf_printk("Added a new entry to the forward flow table for the selected backend server key %d\n", selectedkey);
 		}
 		else {
 			backend = bpf_map_lookup_elem(&server_map, forward_backend);
@@ -119,7 +119,7 @@ int dispatchworkload(struct xdp_md *ctx) {
 				bpf_printk("Cannot look up the server for the forward backend key %d\n", *forward_backend);
 				return XDP_PASS;
 			}
-			 bpf_printk("Located the backend server key from an existing entry in the forward flow table ", *forward_backend);
+			 bpf_printk("Located the backend server key from an existing entry in the forward flow table\n", *forward_backend);
 		}
 
 		struct dispatchmsg_t dmsg;
@@ -128,18 +128,18 @@ int dispatchworkload(struct xdp_md *ctx) {
 		dmsg.backendkey = *forward_backend;
 		bpf_ringbuf_output(&dispatch_ring, &dmsg, sizeof(dmsg), BPF_RB_FORCE_WAKEUP);
 
-		bpf_printk("Packet to be forwrded to the backend server key %d", *forward_backend);
+		bpf_printk("Packet to be forwrded to the backend server key %d\n", *forward_backend);
 		for (int i = 0; i < 6; i++) {      
 			eth->h_dest[i] = backend->macaddr[i];
 			eth->h_source[i] = lbent->macaddr[i];
 		}
 		
-		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x", iph->saddr, iph->daddr);
+		bpf_printk("Before XDP_TX, iph->saddr = %x, iph->daddr = %x\n", iph->saddr, iph->daddr);
 		bpf_printk("Before XDP_TX, eth->h_source = %x:%x:%x:", eth->h_source[0], eth->h_source[1], eth->h_source[2]);
 		bpf_printk("%x:%x:%x\n", eth->h_source[3], eth->h_source[4], eth->h_source[5]);
 		bpf_printk("Before XDP_TX, eth->h_dest = %x:%x:%x:", eth->h_dest[0], eth->h_dest[1], eth->h_dest[2]);
 		bpf_printk("%x:%x:%x\n", eth->h_dest[3], eth->h_dest[4], eth->h_dest[5]);
-		bpf_printk("Returning XDP_TX ...");
+		bpf_printk("Returning XDP_TX ...\n");
 
 		return XDP_TX;
 	

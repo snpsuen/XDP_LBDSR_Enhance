@@ -1,6 +1,5 @@
 ## eBPF/XDP-based Load Balancer Enhancement
-A control plane is added to an load balancer that was created eatlier dispatch workloads through direct server return in an eBPF/XDP framework [(see here)](https://github.com/snpsuen/XDP_DSR_Load_Balancer).
-
+A control plane is added to an load balancer that was created eatlier dispatch workloads through direct server return in an eBPF/XDP framework [(see here)](https://github.com/snpsuen/XDP_DSR_Load_Balancer). Instead of hardcording the configuation, user-defined bpf maps are applied together with a ring buffer to manage the backend servers, load balancer, track the dispatch activities and others. 
 
 The repository holds the source code of implementing an L4 load balancer by means of a eBPF program running through XDP path in the kernel.
 

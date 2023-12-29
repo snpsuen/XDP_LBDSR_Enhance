@@ -18,6 +18,6 @@ It is worthwhile to note that only the MAC addresses of network packets are requ
 
 ### Setup and Experimentation
 
-A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) To start with, a Linux VM or a [Killercoda Ubuntu Playground](https://killercoda.com/playgrounds/scenario/ubuntu is ready to serve the purpose of hosting the testbed containers.
+A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) To start with, a Linux VM or a [Killercoda Ubuntu Playground](https://killercoda.com/playgrounds/scenario/ubuntu) is ready to serve the purpose of hosting the testbed containers.
 
 

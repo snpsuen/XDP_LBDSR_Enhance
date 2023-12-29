@@ -8,7 +8,14 @@ The load balancer is implemented by a bpf program running in the kernel space to
 
 ![Load Balancer Architecture Based on eBPF/XDP](XDP_DSR_LoadBalancer01_p2.png)
 
-### Use Case Environment
+### Sample Use Case
 
-In a typical use case, 
+The load balancer is tyically used for an one-armed deployment, whereby it is attached via a single NIC to the same IP subnet as the client and backend servers. When the client issues a request for a service presented at a virtual IP, the incoming traffic is routed by the load balancer to one of the backend servers in a random manner. Subsequent replies from the chosen backend server are returned directly to the client.
+
+The notable thing is, only the MAC addresses of network packets are required to change in the process. There is no need to modify any parts of the L3 headers and beyond all along.
+
+![Delivery Of Workloads Through Direct Server Return](XDP_DSR_LoadBalancer01_p2.png)
+
+
+
 

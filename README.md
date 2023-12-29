@@ -16,6 +16,9 @@ It is worthwhile to note that only the MAC addresses of network packets are requ
 
 ![Delivery Of Workloads Through Direct Server Return](XDP_DSR_LoadBalancer01_p1.png)
 
+### Set up and Experimentation
+
+Meanwhile, you may follow the readme of the [(earlier repo)](https://github.com/snpsuen/XDP_DSR_Load_Balancer) to set up a testbed based on docker containers and experiment with the sample use case. A more specific set of readme instructions will be provided soon.
 
 
 

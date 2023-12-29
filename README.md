@@ -8,7 +8,7 @@ The load balancer is implemented by a bpf program running in the kernel space to
 
 ![Load Balancer Architecture Based on eBPF/XDP](XDP_DSR_LoadBalancer01_p2.png)
 
-### Sample Use Case
+### Use Case Example
 
 The load balancer is tyically used for the so-called one-armed deployment, whereby it is attached via a single NIC to the same IP subnet as the client and backend servers. When the client issues a request for a service exposed from a virtual IP, the incoming traffic is routed by the load balancer to one of the backend servers in a random manner. Subsequent replies from the chosen backend server are returned directly to the client.
 
@@ -16,9 +16,8 @@ It is worthwhile to note that only the MAC addresses of network packets are requ
 
 ![Delivery Of Workloads Through Direct Server Return](XDP_DSR_LoadBalancer01_p1.png)
 
-### Set up and Experimentation
+### Setup and Experimentation
 
-Meanwhile, you may follow the readme of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) to set up a testbed based on docker containers and experiment with the sample use case. A more specific set of readme instructions will be provided soon.
-
+A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) To start with, a Linux VM or a [Killercoda Ubuntu Playground](https://killercoda.com/playgrounds/scenario/ubuntu is ready to serve the purpose of hosting the testbed containers.
 
 

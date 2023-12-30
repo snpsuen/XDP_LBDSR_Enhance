@@ -67,7 +67,7 @@ docker run -d --privileged --name curlclient -h curlclient curlimages/curl:lates
 docker exec -it -u root curlclient sh
 ip route add 192.168.25.10/32 via 172.17.0.2
 ```
-More realistically, say in a production environment, it is necessary for the VIP host route to be originated as a stub link and advertised by routing protocols like OSPF and BGP throughout an autonmous system and beyond.
+More realistically, say in a production environment, it is necessary to arrange for the VIP host route to be originated as a stub link for advertisement by routing protocols like OSPF and BGP throughout an autonmous system and beyond.
 
 #### 4  Test it out
 1. Issue a curl command from the curl client to the service VIP in a loop.

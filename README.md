@@ -71,7 +71,7 @@ More realistically, say in a production environment, it is necessary to arrange 
 
 #### 4  Test it out
 
-1. Enter the load balancer container and run the control plane ./xdp_lbdsr with the default NIC eth0 and ring buffer pollong interval 1000 ms.
+1. Enter the load balancer container and run the control plane ./xdp_lbdsr where the attached NIC and ring buffer poll interval are set to eth0 and 1000 ms respectively.
 ```
 docker exec -it lbdsr0a bash
 cd XDP_LBDSR*
@@ -79,7 +79,10 @@ cd XDP_LBDSR*
 ```
 ![demo_screen01](images/xdp_lbdsr_screen01.PNG)
 
-2. Issue a curl command from the curl client to the service VIP in a loop.
+2. Select option 2 from the main menu to specify the VIP together with the MAC of the load balancer.
+![demo_screen02](images/xdp_lbdsr_screen02.PNG)
+
+
 ```
 while true
 do

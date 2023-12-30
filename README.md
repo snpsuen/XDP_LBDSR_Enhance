@@ -6,7 +6,7 @@ The load balancer is implemented by a bpf program running in the kernel space to
 * xdp_lbdsr.bpf.c (Data plane in the kernel space)
 * xdp_lbdsr.c (Control plane in the user space)
 
-![Load Balancer Architecture Based on eBPF/XDP](images/XDP_DSR_LoadBalancer01_p2.png)
+![Load Balancer Architecture Based on eBPF/XDP](XDP_DSR_LoadBalancer01_p2.png)
 
 ### Use Case Example
 

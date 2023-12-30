@@ -18,32 +18,31 @@ It is worthwhile to note that only the MAC addresses of network packets are requ
 
 ### Setup and Experimentation
 
-A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) You may choose to a Linux VM or a [Killercoda Ubuntu Playground (https://killercoda.com/playgrounds/scenario/ubuntu) to start with as a host of the following containers.
+A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) You may choose a Linux VM or a [Killercoda Ubuntu Playground (https://killercoda.com/playgrounds/scenario/ubuntu) to start with as a host of the following containers.
 * Load balancer: lbdsr01
 * Backend Server A: backend-A
 * Backend Server B: backend-B
 * Curl client: curlclient01
 
 #### 1  Build the load balancer
-The whole end-to-end set up is to be done in the Killercoda online lab, https://killercoda.com/. The simple load balancer wil be hardcoded to dispatch requests randomly to two backend servers at known IP and MAC addresses.
+The simple load balancer wil be built on a Ubuntu container that is equipped with a full ePBF/XDP development environment.
 1. Pull a pre-built eBPF/XDP ready docker to run a container as the platform of the load balancer.
 ```
-docker run -d --privileged --name simplelb -h simplelb snpsuen/ebpfxdp:v05
-docker exec -it simplelb bash
+docker run -d --privileged --name lbdsr0a -h lbdsr0a snpsuen/ebpf-xdp:v03
+docker exec -it lbdsr0a bash
 ```
-2. Download this repo, XDP_DSR_Load_Balancer, to simplelb.
+2. Download this repo and build the load balancer on both the control and data planes.
 ```
 cd /var/tmp
 git clone https://github.com/snpsuen/XDP_DSR_Load_Balancer.git
 ```
 3. Build and attach the load balancer to eth0.
 ```
+git clone https://github.com/snpsuen/XDP-LoadBalancer-Revamp
 cd XDP*
 make
-ls /sys/fs/bpf
-ip addr show eth0
 ```
-4. Open a terminal to the host of the container and trace the on-going eBPF/XDP kernel mesages in real time.
+4. Open a terminal to the host of the container and prepare for the on-going eBPF/XDP kernel mesages to be traced in real time.
 ```
 sudo cat /sys/kernel/debug/tracing/trace_pipe
 ```

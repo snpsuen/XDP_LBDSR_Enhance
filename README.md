@@ -33,7 +33,7 @@ docker exec -it lbdsr0a bash
 ```
 2. Download this repo and build the load balancer on both the control and data planes.
 ```
-git clone https://github.com/snpsuen/XDP-LoadBalancer-Revamp
+git clone https://github.com/snpsuen/XDP_LBDSR_Enhance
 cd XDP*
 make
 ```

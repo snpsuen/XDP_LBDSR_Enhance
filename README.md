@@ -33,16 +33,11 @@ docker exec -it lbdsr0a bash
 ```
 2. Download this repo and build the load balancer on both the control and data planes.
 ```
-cd /var/tmp
-git clone https://github.com/snpsuen/XDP_DSR_Load_Balancer.git
-```
-3. Build and attach the load balancer to eth0.
-```
 git clone https://github.com/snpsuen/XDP-LoadBalancer-Revamp
 cd XDP*
 make
 ```
-4. Open a terminal to the host of the container and prepare for the on-going eBPF/XDP kernel mesages to be traced in real time.
+3. Open a terminal to the host of the container and prepare for the on-going eBPF/XDP kernel mesages to be traced in real time.
 ```
 sudo cat /sys/kernel/debug/tracing/trace_pipe
 ```

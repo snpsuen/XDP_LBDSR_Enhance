@@ -70,7 +70,16 @@ ip route add 192.168.25.10/32 via 172.17.0.2
 More realistically, say in a production environment, it is necessary to arrange for the VIP host route to be originated as a stub link for advertisement by routing protocols like OSPF and BGP throughout an autonmous system and beyond.
 
 #### 4  Test it out
-1. Issue a curl command from the curl client to the service VIP in a loop.
+
+1. Enter the load balancer container and run the control plane ./xdp_lbdsr with the default NIC eth0 and ring buffer pollong interval 1000 ms.
+```
+docker exec -it lbdsr0a bash
+cd XDP_LBDSR*
+./xdp_lbdsr
+```
+![demo_screen01](images/xdp_lbdsr_screen01.PNG)
+
+2. Issue a curl command from the curl client to the service VIP in a loop.
 ```
 while true
 do

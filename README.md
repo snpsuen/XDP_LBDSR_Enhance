@@ -18,7 +18,7 @@ It is worthwhile to note that only the MAC addresses of network packets are requ
 
 ### Setup and Experimentation
 
-A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same a those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) You may choose a Linux VM or a [Killercoda Ubuntu Playground (https://killercoda.com/playgrounds/scenario/ubuntu) to start with as a host of the following containers.
+A testbed of docker containers is set up for experimentation with the use case example. The steps are pretty much the same as those of the [earlier repo](https://github.com/snpsuen/XDP_DSR_Load_Balancer) You may choose a Linux VM or a [Killercoda Ubuntu Playground] (https://killercoda.com/playgrounds/scenario/ubuntu) to start with as a host of the following containers.
 * Load balancer: lbdsr01
 * Backend Server A: backend-A
 * Backend Server B: backend-B
@@ -67,6 +67,7 @@ docker run -d --privileged --name curlclient -h curlclient curlimages/curl:lates
 docker exec -it -u root curlclient sh
 ip route add 192.168.25.10/32 via 172.17.0.2
 ```
+More realistically, say in a production environment, it is necessary for the VIP host route to be originated as a stub link and advertised by routing protocols like OSPF and BGP throughout an autonmous system and beyond.
 
 #### 4  Test it out
 1. Issue a curl command from the curl client to the service VIP in a loop.

@@ -25,7 +25,7 @@ A testbed of docker containers is set up for experimentation with the use case e
 * Curl client: curlclient01
 
 #### 1  Build the load balancer
-The simple load balancer wil be built on a Ubuntu container that is equipped with a full ePBF/XDP development environment.
+The load balancer is to be built on a Ubuntu container that is equipped with a full ePBF/XDP development environment.
 1. Pull a pre-built eBPF/XDP ready docker to run a container as the platform of the load balancer.
 ```
 docker run -d --privileged --name lbdsr0a -h lbdsr0a snpsuen/ebpf-xdp:v03
@@ -53,7 +53,8 @@ docker run -d --privileged --name backend-B -h backend-B nginxdemos/hello:plain-
 docker exec -it backend-A sh
 ip addr add 192.168.25.10/24 dev lo
 ```
-Similar steps are taken on the backend-B container. In this case, the VIP is hardcoded to 192.168.10.25, which will be used by clients to access the requested service through the load balancer.
+Similar steps are taken on the backend-B container. 
+In this case, the VIP is set arbitraily to 192.168.10.25, which will be used by clients to access the requested service through the load balancer.
 
 #### 3  Set up a client container
 1. Run a client container based on the latest curl docker.

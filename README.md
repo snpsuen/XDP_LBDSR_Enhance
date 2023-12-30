@@ -6,7 +6,7 @@ The load balancer is implemented by a bpf program running in the kernel space to
 * xdp_lbdsr.bpf.c (Data plane in the kernel space)
 * xdp_lbdsr.c (Control plane in the user space)
 
-![Load Balancer Architecture Based on eBPF/XDP](XDP_DSR_LoadBalancer01_p2.png)
+![Load Balancer Architecture Based on eBPF/XDP](images/XDP_DSR_LoadBalancer01_p2.png)
 
 ### Use Case Example
 
@@ -14,7 +14,7 @@ The load balancer is tyically used for the so-called one-armed deployment, where
 
 It is worthwhile to note that only the MAC addresses of network packets are required to change in the process. There is no need to modify any parts of the L3 headers and beyond all along.
 
-![Delivery Of Workloads Through Direct Server Return](XDP_DSR_LoadBalancer01_p1.png)
+![Delivery Of Workloads Through Direct Server Return](images/XDP_DSR_LoadBalancer01_p1.png)
 
 ### Setup and Experimentation
 

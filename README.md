@@ -37,7 +37,7 @@ git clone https://github.com/snpsuen/XDP-LoadBalancer-Revamp
 cd XDP*
 make
 ```
-3. Open a terminal to the host of the container and prepare for the on-going eBPF/XDP kernel mesages to be traced in real time.
+3. Open a terminal to the host of the container and prepare for the on-going bpf_printk messages to be traced in real time.
 ```
 sudo cat /sys/kernel/debug/tracing/trace_pipe
 ```

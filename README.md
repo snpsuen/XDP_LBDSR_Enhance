@@ -53,7 +53,8 @@ docker run -d --privileged --name backend-B -h backend-B nginxdemos/hello:plain-
 docker exec -it backend-A sh
 ip addr add 192.168.25.10/24 dev lo
 ```
-Similar steps are taken on the backend-B container. 
+Similar steps are taken on the backend-B container.
+
 In this case, the VIP is set arbitraily to 192.168.10.25, which will be used by clients to access the requested service through the load balancer.
 
 #### 3  Set up a client container

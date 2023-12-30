@@ -80,61 +80,13 @@ cd XDP_LBDSR*
 ![demo_screen01](images/xdp_lbdsr_screen01.PNG)
 
 2. Select option 2 from the main menu to specify the VIP together with the MAC of the load balancer.
+
 ![demo_screen02](images/xdp_lbdsr_screen02.PNG)
 
+3. Select option 2 from the main menu, followed by 1 from the submenu to register the backend servers backend-A and backend-B.
 
-```
-while true
-do
-curl -s http://192.168.25.10
-sleep 3
-echo ""
-done
-```
-Expect to receive replies randomly from backend-A or backend-B.
-```
-/home/curl_user # while true
-> do
-> curl -s http://192.168.25.10
-> sleep 3
-> echo ""
-> done
-Server address: 192.168.25.10:80
-Server name: backend-a
-Date: 15/Jun/2023:09:03:44 +0000
-URI: /
-Request ID: 5821794b6313f1d4770201d5e79abad6
+![demo_screen03](images/xdp_lbdsr_screen03.PNG)
 
-Server address: 192.168.25.10:80
-Server name: backend-a
-Date: 15/Jun/2023:09:03:47 +0000
-URI: /
-Request ID: d6ab760758ef93462a422bac5ce2a0cb
+4. Enter the curl client container and access the backend nginx servers through the VIP in a loop. The http requests are observed to be dispatched randomly between backend-A and backend-B.
 
-Server address: 192.168.25.10:80
-Server name: backend-a
-Date: 15/Jun/2023:09:03:50 +0000
-URI: /
-Request ID: aa3c365b30261d13726738c231b6d9f2
-
-Server address: 192.168.25.10:80
-Server name: backend-b
-Date: 15/Jun/2023:09:03:53 +0000
-URI: /
-Request ID: 774487b5e3e01967e0bfb5fe86752d16
-
-Server address: 192.168.25.10:80
-Server name: backend-a
-Date: 15/Jun/2023:09:03:56 +0000
-URI: /
-Request ID: 616153625c060cde7be942b234ed22a7
-
-Server address: 192.168.25.10:80
-Server name: backend-b
-Date: 15/Jun/2023:09:03:59 +0000
-URI: /
-Request ID: d37c0af522469a2e4de74798d0166079
-```
-
-
-
+![demo_screen05](images/xdp_lbdsr_screen05.PNG)
